@@ -1,0 +1,6 @@
+﻿<Functions>
+	<Function Name="Scale Out DB">
+		<Setting Key="Mail_Report_GetMailTaskList" SpName="Mail_Report_GetMailTaskList" DbName="DBMMS.bodb_MMS.wsv_nap" Timeout="0" />
+		<Setting Key="Mail_Core_UpdateMailStatus" SpName="Mail_Core_UpdateMailStatus" DbName="DBMMS.bodb_MMS.wsv_nap" Timeout="0" />
+	</Function>
+</Functions>

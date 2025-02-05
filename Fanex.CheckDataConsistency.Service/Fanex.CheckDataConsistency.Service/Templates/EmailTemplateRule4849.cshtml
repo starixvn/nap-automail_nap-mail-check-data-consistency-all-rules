@@ -1,0 +1,144 @@
+﻿@using Fanex.CheckDataConsistency.Business.Model;
+@{
+    List<MessageRule4849Model> data = Model.Item1;  
+    DateTime currentTime = Model.Item2;
+    int rowIndex = 1;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:200px;">SP</td>
+                <td style="text-align:center;">Message</td>
+                <td style="text-align:center;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MessageRule4849Model messageModel in data)
+            {
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                    <td style="text-align:center;vertical-align:top">Failure</td>
+                    <td style="text-align:center;vertical-align:top">High</td>
+                    <td style="text-align:center;vertical-align:top">@messageModel.Rule</td>
+                    <td style="text-align:left;vertical-align:top">@messageModel.SPName</td>
+                    <td style="text-align:left;vertical-align:top">
+                        <div style="font-family:Tahoma; font-size:10pt;">
+                            @messageModel.Message
+                        </div>
+                            @if (messageModel.IsSeletTop)
+                            {
+                                <div style="font-family:Tahoma; font-size:10pt; color:blue; font-style:initial;">
+                                    Notice: Data has been displayed top 100
+                                </div>
+                            }
+                            <div>
+                                <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                    <tr style="background-color:#ffcc99">
+                                        <td style="text-align:center; width:100px">Date</td>
+                                        <td style="text-align:center; width:200px">Condition to get data </td>
+                                    </tr>
+
+                                    @foreach (var row in messageModel.FromToDates)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left;">WinlostDate</td>
+                                            <td style="text-align:left;">@row.FromDate.ToString("dd MMM yyyy") - @row.ToDate.ToString("dd MMM yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:left;">Transdate</td>
+                                            <td style="text-align:left;">&lt; @currentTime.ToString("dd MMM yyyy HH:mm:ss") GMT-4</td>
+                                        </tr>
+                                    }
+                                </table>
+                        </div>                            
+                    </td>
+                    <td style="text-align:left;vertical-align:top"> 
+                        <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                            <tr>
+                                <td style="text-align:center; width:30px">#</td>
+                                <td style="text-align:center; width:150px">DB</td>
+                                <td style="text-align:center">Detail Info</td>
+                            </tr>
+                            @foreach (var row in messageModel.Data)
+                            {
+                                var index = Convert.ToInt32(row.Key.Split('-')[0]) + 1;
+                                var db = row.Key.Split('-')[1];
+                                rowIndex++;
+                                <tr>
+                                    @if (rowIndex % 2 == 0)
+                                    {
+                                        <td style="text-align:center" rowspan="2">@index </td>
+                                    }
+                                    <td>@db </td>
+                                    <td>
+                                        <table border="1"
+                                               id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tr>
+                                                <td style="width: 100px; text-align: center">TableName</td>
+                                                <td style="width: 100px; text-align: center">SiteDBGroupID</td>
+                                                <td style="width: 100px; text-align: center">Recommend</td>
+                                                @if (messageModel.Rule == "#48")
+                                                {
+                                                    <td style="width: 100px; text-align: center">Status</td>
+                                                    <td style="width: 100px; text-align: center">
+                                                        <span>TicketCount</span>
+                                                    </td>
+                                                }
+                                                else if (messageModel.Rule == "#49")
+                                                {
+                                                    <td style="width:200px" colspan="2">
+                                                        <span>TotalCheckSumAgg</span>
+                                                    </td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                @if (row.Value != null)
+                                                {
+                                                    <td>@row.Value.TableName</td>
+                                                    <td style="text-align:right">@row.Value.SiteDBGroupID</td>
+                                                    <td style="text-align:right">@row.Value.Recommend</td>
+                                                    @if (messageModel.Rule == "#48")
+                                                    {
+                                                        <td>@row.Value.Status</td>
+                                                        <td style="text-align:right">@row.Value.TicketCount</td>
+                                                    }
+                                                    else if (messageModel.Rule == "#49")
+                                                    {
+                                                        <td style="text-align:right" colspan="2">@row.Value.TotalCheckSumAgg</td>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="5" style="text-align:center">There is no data</td>
+                                                }
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

@@ -1,0 +1,108 @@
+﻿@using Fanex.CheckDataConsistency.Business.Model;
+@{
+    List<MessageRule53Model> data = Model.Item1;
+    int rowIndex = 0;
+    int rowSubIndex = 0;
+    int tableRowIndex = 0;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:200px;">SP</td>
+                <td style="text-align:center; width:300px;">Message</td>
+                <td style="text-align:center;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MessageRule53Model messageModel in data)
+            {
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                    <td style="text-align:center;vertical-align:top">Failure</td>
+                    <td style="text-align:center;vertical-align:top">High</td>
+                    <td style="text-align:center;vertical-align:top">@messageModel.Rule</td>
+                    <td style="text-align:left;vertical-align:top">@messageModel.SPName</td>
+                    <td style="text-align:left;vertical-align:top">
+                        @messageModel.Message                      
+                     </td>
+                    <td style="text-align:left;vertical-align:top">
+                        <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                            <tr>
+                                <td style="text-align:center; width:30px">#</td>
+                                <td style="text-align:center; width:150px">DB</td>
+                                <td style="text-align:center">Detail Info</td>
+                            </tr>
+                            @foreach (var row in messageModel.Data)
+                            {
+                                rowIndex++;
+                                rowSubIndex = 0;
+                                <tr>
+                                    <td style="text-align:center">@rowIndex </td>
+                                    <td style="vertical-align:top"> 
+                                        <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tr>
+                                                <td style="text-align:center; width:10px">#</td>
+                                                <td style="text-align:left; width:100px">DB</td>
+                                                <td style="text-align:left; width:100px">TableName</td>
+                                                <td style="text-align:right; width:100px">FromTransID</td>
+                                                <td style="text-align:right; width:100px">ToTransID</td>
+                                            </tr>
+                                            @foreach (var sub in row.Value.Item2)
+                                            {
+                                                tableRowIndex++;
+                                                <tr>
+                                                    <td style="text-align:center; width:30px">@tableRowIndex</td>
+                                                    <td style="text-align:left; width:100px">@row.Key</td>
+                                                    <td style="text-align:center; width:100px">@sub.TableName</td>
+                                                    <td style="text-align:center; width:100px">@sub.FromTransID</td>
+                                                    <td style="text-align:center; width:100px">@sub.ToTransID</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tr>
+                                                <td style="width: 30px; text-align: center">#</td>
+                                                <td style="width: 100px; text-align: center">TableName</td>
+                                                <td style="width: 100px; text-align: center">TransID</td>
+                                                <td style="width: 100px; text-align: center">SiteDBGroupID</td>
+                                                <td style="width: 200px; text-align: center">SiteDBGroupIDConfigured</td>
+                                            </tr>
+                                            @foreach (var sub in row.Value.Item1)
+                                            {
+                                                rowSubIndex++;
+                                                <tr>
+                                                    <td style="text-align:center">@rowSubIndex</td>
+                                                    <td style="text-align:right">@sub.TableName</td>
+                                                    <td style="text-align:right">@sub.TransID</td>
+                                                    <td style="text-align:right">@sub.SiteDBGroupID</td>
+                                                    <td style="text-align:right">@sub.SiteDBGroupIDConfigured</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

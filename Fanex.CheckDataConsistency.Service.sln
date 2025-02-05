@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.CheckDataConsistency.Service", "Fanex.CheckDataConsistency.Service\Fanex.CheckDataConsistency.Service\Fanex.CheckDataConsistency.Service.csproj", "{872CDC41-1E6B-4FBE-A44F-606762553B2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.CheckDataConsistency.Business", "Fanex.CheckDataConsistency.Service\Fanex.CheckDataConsistency.Business\Fanex.CheckDataConsistency.Business.csproj", "{8EA17026-3C6E-4CDD-97C4-2191C504F909}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{872CDC41-1E6B-4FBE-A44F-606762553B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{872CDC41-1E6B-4FBE-A44F-606762553B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{872CDC41-1E6B-4FBE-A44F-606762553B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{872CDC41-1E6B-4FBE-A44F-606762553B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EA17026-3C6E-4CDD-97C4-2191C504F909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA17026-3C6E-4CDD-97C4-2191C504F909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA17026-3C6E-4CDD-97C4-2191C504F909}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA17026-3C6E-4CDD-97C4-2191C504F909}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C3C03FE-0095-4BBB-9B79-5338AF6BEE13}
+	EndGlobalSection
+EndGlobal

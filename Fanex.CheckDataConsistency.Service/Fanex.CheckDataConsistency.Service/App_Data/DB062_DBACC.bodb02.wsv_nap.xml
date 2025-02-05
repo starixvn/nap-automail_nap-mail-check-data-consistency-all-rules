@@ -1,0 +1,9 @@
+﻿<Functions>
+	<Function Name="Scale Out DB">
+		<Setting Key="DB062_DBA_Consistency_CheckTicketCount" SpName="DBA_Consistency_CheckTicketCount" DbName="DB062_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB062_DBA_Consistency_CheckSumTicket" SpName="DBA_Consistency_CheckSumTicket" DbName="DB062_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB062_DBA_Consistency_CheckDuplicatedBalanceUpTicket" SpName="DBA_Consistency_CheckDuplicatedBalanceUpTicket" DbName="DB062_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB062_DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DB062_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB062_DBA_Consistency_CheckMBUTicketCount" SpName="DBA_Consistency_CheckMBUTicketCount" DbName="DB062_DBACC.bodb02.wsv_nap" Timeout="0" />
+	</Function>
+</Functions>

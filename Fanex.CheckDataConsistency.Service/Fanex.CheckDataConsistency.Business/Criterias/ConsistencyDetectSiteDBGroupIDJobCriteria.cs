@@ -1,0 +1,12 @@
+﻿using Fanex.Data.Repository;
+
+namespace Fanex.CheckDataConsistency.Business.Criterias;
+
+public class ConsistencyDetectSiteDBGroupIDJobCriteria(string spName) : CriteriaBase
+{
+    private string spName { get; set; } = spName;
+
+    public override string GetSettingKey() => spName;
+
+    public override bool IsValid() => true;
+}
