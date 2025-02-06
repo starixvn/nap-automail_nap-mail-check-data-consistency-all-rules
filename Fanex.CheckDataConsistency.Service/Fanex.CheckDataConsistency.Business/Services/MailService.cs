@@ -1,8 +1,8 @@
 ﻿using Fanex.CheckDataConsistency.Business.Model;
 using Fanex.MailDelivery.Core.Models;
-using RazorEngine;
-using RazorEngine.Templating;
+using RazorEngineCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
@@ -19,6 +19,8 @@ public interface MailService
 
 public class MailServiceImp : MailService
 {
+    private static readonly ConcurrentDictionary<int, IRazorEngineCompiledTemplate> CompiledTemplateCache = new();
+
     public Mail CreateMailRule4849(List<MessageRule4849Model> messageModels, DateTime currentTime)
     {
         return new Mail
@@ -31,14 +33,17 @@ public class MailServiceImp : MailService
 
     private static string LoadBodyRule4849(List<MessageRule4849Model> messageModels, DateTime currentTime)
     {
-        var tuple = new Tuple<List<MessageRule4849Model>, DateTime>(messageModels, currentTime);
-        var template = File.ReadAllText("Templates/EmailTemplateRule4849.cshtml");
-        const string tplKey = "Fanex.CheckDataConsistency.Service-Rule4849";
-        string result = Engine.Razor.IsTemplateCached(tplKey, null)
-            ? Engine.Razor.Run(tplKey, null, tuple)
-            : Engine.Razor.RunCompile(template, tplKey, model: tuple);
+        const string templatePath = "Templates/EmailTemplateRule4849.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template);
+        });
 
-        return result;
+        var tuple = new Tuple<List<MessageRule4849Model>, DateTime>(messageModels, currentTime);
+        return compiledTemplate.Run(tuple);
     }
 
     public Mail CreateMailRule50(List<MessageRule50Model> messageModels)
@@ -53,14 +58,17 @@ public class MailServiceImp : MailService
 
     private static string LoadBodyRule50(List<MessageRule50Model> messageModels)
     {
-        var tuple = new Tuple<List<MessageRule50Model>>(messageModels);
-        var template = File.ReadAllText("Templates/EmailTemplateRule50.cshtml");
-        const string tplKey = "Fanex.CheckDataConsistency.Service-Rule50";
-        string result = Engine.Razor.IsTemplateCached(tplKey, null)
-            ? Engine.Razor.Run(tplKey, null, tuple)
-            : Engine.Razor.RunCompile(template, tplKey, model: tuple);
+        const string templatePath = "Templates/EmailTemplateRule50.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template);
+        });
 
-        return result;
+        var tuple = new Tuple<List<MessageRule50Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
     }
 
     public Mail CreateMailRule53(List<MessageRule53Model> messageModels)
@@ -76,13 +84,16 @@ public class MailServiceImp : MailService
 
     private static string LoadBodyRule53(List<MessageRule53Model> messageModels)
     {
-        var tuple = new Tuple<List<MessageRule53Model>>(messageModels);
-        var template = File.ReadAllText("Templates/EmailTemplateRule53.cshtml");
-        const string tplKey = "Fanex.CheckDataConsistency.Service-Rule53";
-        string result = Engine.Razor.IsTemplateCached(tplKey, null)
-            ? Engine.Razor.Run(tplKey, null, tuple)
-            : Engine.Razor.RunCompile(template, tplKey, model: tuple);
+        const string templatePath = "Templates/EmailTemplateRule53.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template);
+        });
 
-        return result;
+        var tuple = new Tuple<List<MessageRule53Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
     }
 }

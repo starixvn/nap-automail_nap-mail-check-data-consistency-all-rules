@@ -14,8 +14,8 @@ public static class AppConfigService
 
     public static Dictionary<string, List<RetryInfo>> RetryInfos { get; set; } = new()
     {
-        { Rule.Rule48, new List<RetryInfo>{ new() } },
-        { Rule.Rule49, new List<RetryInfo>{ new() } }
+        { Rule.Rule48, [new RetryInfo()] },
+        { Rule.Rule49, [new RetryInfo()] }
     };
 
     public static int RetryCount { get; set; }

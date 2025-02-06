@@ -1,8 +1,7 @@
-﻿@using Fanex.CheckDataConsistency.Business.Model;
-@{
-    List<MessageRule4849Model> data = Model.Item1;  
-    DateTime currentTime = Model.Item2;
-    int rowIndex = 1;
+﻿@{
+    var data = Model.Item1;  
+    var currentTime = Model.Item2;
+    var rowIndex = 1;
 }
 <div>
     <div>
@@ -25,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (MessageRule4849Model messageModel in data)
+            @foreach (var messageModel in data)
             {
                 <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
                     <td style="text-align:center;vertical-align:top">Failure</td>
@@ -72,7 +71,7 @@
                             </tr>
                             @foreach (var row in messageModel.Data)
                             {
-                                var index = Convert.ToInt32(row.Key.Split('-')[0]) + 1;
+                                var index = row.Key.Split('-')[0] + 1;
                                 var db = row.Key.Split('-')[1];
                                 rowIndex++;
                                 <tr>
