@@ -5,8 +5,8 @@
 FROM hub.nexdev.net/base/dotnet/core/sdk:9.0-alpine AS builder
 WORKDIR /src
 
-ENV NUGET_PACKAGES=/src/packages
-COPY --from=deps $NUGET_PACKAGES/. $NUGET_PACKAGES/
+# ENV NUGET_PACKAGES=/src/packages
+# COPY --from=deps $NUGET_PACKAGES/. $NUGET_PACKAGES/
 
 
 COPY ./Fanex.CheckDataConsistency.Service/Fanex.CheckDataConsistency.Business ./Fanex.CheckDataConsistency.Business
