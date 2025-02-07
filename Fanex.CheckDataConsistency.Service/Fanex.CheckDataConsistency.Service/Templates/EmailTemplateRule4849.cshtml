@@ -1,7 +1,7 @@
 ﻿@{
     var data = Model.Item1;  
     var currentTime = Model.Item2;
-    var rowIndex = 1;
+    int rowIndex = 1;
 }
 <div>
     <div>
@@ -71,7 +71,7 @@
                             </tr>
                             @foreach (var row in messageModel.Data)
                             {
-                                var index = Convert.ToInt32(row.Key.Split('-')[0]) + 1;
+                                int index = Convert.ToInt32(row.Key.Split('-')[0]);
                                 var db = row.Key.Split('-')[1];
                                 rowIndex++;
                                 <tr>

@@ -2,7 +2,6 @@
 using Fanex.CheckDataConsistency.Business.Services.MailStation;
 using Fanex.MailDelivery.Client;
 using Fanex.MailDelivery.Core.Models;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,19 +17,15 @@ public interface MainRule4849Service
 
 public class MainRule4849ServiceImp(
     Log log,
-    DataService dataService,
     RefineDataService refineDataService,
     MailService mailService,
-    DataServiceMailStation dataServiceMailStation,
-    IConfiguration configuration)
+    DataServiceMailStation dataServiceMailStation)
     : MainRule4849Service, IDisposable
 {
-    private readonly DataService dataService = dataService;
     private bool isHasData;
-    private readonly IConfiguration configuration = configuration;
 
     private Timer timer;
-    private const int MaxRetry = 4;
+    private const int MaxRetry = 1;//4
 
     ~MainRule4849ServiceImp()
     {
@@ -41,7 +36,7 @@ public class MainRule4849ServiceImp(
     {
         const int milisecond = 1000;
         const int second = 60;
-        const int minute = 5;
+        const int minute = 1;//5
         timer = new Timer();
         timer.Interval = minute * second * milisecond;
         timer.Enabled = true;
@@ -167,20 +162,20 @@ public class MainRule4849ServiceImp(
             dataServiceMailStation.UpdateMailStatus(JobStatus.SuccessWithoutSendmail);
             countUpdate++;
             Thread.Sleep(10000);
+            GC.SuppressFinalize(this);
         }
 
         AppConfigService.CurrentTime = null;
         AppConfigService.RetryCount = 0;
         AppConfigService.RetryInfos = new Dictionary<string, List<RetryInfo>>
         {
-            { Rule.Rule48, new List<RetryInfo>{ new() } },
-            { Rule.Rule49, new List<RetryInfo>{ new() } },
+            { Rule.Rule48, [new RetryInfo()] },
+            { Rule.Rule49, [new RetryInfo()] },
         };
     }
 
     public void Dispose()
     {
-        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
