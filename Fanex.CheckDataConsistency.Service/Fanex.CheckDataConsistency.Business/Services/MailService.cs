@@ -39,7 +39,10 @@ public class MailServiceImp : MailService
         {
             var template = File.ReadAllText(templatePath);
             var razorEngine = new RazorEngine();
-            return razorEngine.Compile(template);
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
         });
 
         var tuple = new Tuple<List<MessageRule4849Model>, DateTime>(messageModels, currentTime);

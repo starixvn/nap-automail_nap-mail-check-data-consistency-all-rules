@@ -71,7 +71,7 @@
                             </tr>
                             @foreach (var row in messageModel.Data)
                             {
-                                var index = row.Key.Split('-')[0] + 1;
+                                var index = Convert.ToInt32(row.Key.Split('-')[0]) + 1;
                                 var db = row.Key.Split('-')[1];
                                 rowIndex++;
                                 <tr>
