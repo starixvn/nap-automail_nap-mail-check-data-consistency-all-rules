@@ -11,12 +11,17 @@ public interface RefineDataService
     List<MessageRule50Model> SelectDataRule50(string rule);
 
     List<MessageRule53Model> SelectDataRule53();
+
+    List<MessageRule46Model> SelectDifferentDataRule46();
+
+    void UpdateSiteDBSystemSettingRule46();
 }
 
 public class RefineDataServiceImp(
     DataConsistencyRule4849ProviderService dataServiceRule4849,
     DataConsistencyRule50ProviderService dataServiceRule50,
-    DataConsistencyRule53Service dataServiceRule53)
+    DataConsistencyRule53Service dataServiceRule53,
+    DataConsistencyRule46Service dataServiceRule46)
     : RefineDataService
 {
     public List<MessageRule4849Model> SelectDifferentDataRule4849(DateTime currentTime)
@@ -43,5 +48,21 @@ public class RefineDataServiceImp(
         var resultRule53 = dataServiceRule53.QueryData();
 
         return resultRule53;
+    }
+
+    public List<MessageRule46Model> SelectDifferentDataRule46()
+    {
+        var resultRule46 = dataServiceRule46.QueryData();
+
+        return resultRule46;
+    }
+
+    public void UpdateSiteDBSystemSettingRule46()
+    {
+        var dataSiteDBs = AppConfigService.DataSiteDBs;
+        if (AppConfigService.Config.IsUpdateData)
+        {
+            dataServiceRule46.UpdateSiteDBSystemSetting(dataSiteDBs);
+        }
     }
 }

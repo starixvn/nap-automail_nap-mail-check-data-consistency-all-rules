@@ -46,20 +46,20 @@ public class MainRule4849ServiceImp(
 
     private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessing}] at {DateTime.Now}");
-        if (!AppConfigService.IsOnProcessing)
+        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] at {DateTime.Now}");
+        if (!AppConfigService.IsOnProcessingRule53)
         {
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessing}] BEGIN at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] BEGIN at {DateTime.Now}");
             QueryData();
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessing}] END at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] END at {DateTime.Now}");
         }
     }
 
     private void QueryData()
     {
-        AppConfigService.IsOnProcessing = true;
+        AppConfigService.IsOnProcessingRule53 = true;
         Execute();
-        AppConfigService.IsOnProcessing = false;
+        AppConfigService.IsOnProcessingRule53 = false;
     }
 
     public JobMessage Execute()
@@ -84,7 +84,7 @@ public class MainRule4849ServiceImp(
         }
         finally
         {
-            AppConfigService.IsOnProcessing = false;
+            AppConfigService.IsOnProcessingRule53 = false;
             JobStatus jobStatus;
             jobMessage.Mail = result.Mail;
 

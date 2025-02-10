@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
 using System;
 
-namespace Fanex.CheckDataConsistency.Business.Criterias;
+namespace Fanex.CheckDataConsistency.Business.Criteria;
 
 public class CriteriaData(string spName) : CriteriaBase
 {

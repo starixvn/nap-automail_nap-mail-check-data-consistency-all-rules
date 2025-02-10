@@ -15,6 +15,8 @@ public interface MailService
     Mail CreateMailRule50(List<MessageRule50Model> messageModels);
 
     Mail CreateMailRule53(List<MessageRule53Model> messageModels);
+
+    Mail CreateMailRule46(List<MessageRule46Model> messageModels);
 }
 
 public class MailServiceImp : MailService
@@ -67,7 +69,10 @@ public class MailServiceImp : MailService
         {
             var template = File.ReadAllText(templatePath);
             var razorEngine = new RazorEngine();
-            return razorEngine.Compile(template);
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
         });
 
         var tuple = new Tuple<List<MessageRule50Model>>(messageModels);
@@ -93,10 +98,42 @@ public class MailServiceImp : MailService
         {
             var template = File.ReadAllText(templatePath);
             var razorEngine = new RazorEngine();
-            return razorEngine.Compile(template);
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
         });
 
         var tuple = new Tuple<List<MessageRule53Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule46(List<MessageRule46Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule46(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule46
+        };
+    }
+
+    private static string LoadBodyRule46(List<MessageRule46Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule46.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule46Model>>(messageModels);
         return compiledTemplate.Run(tuple);
     }
 }

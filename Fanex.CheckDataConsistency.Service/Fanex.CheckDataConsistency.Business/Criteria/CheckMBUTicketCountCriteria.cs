@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Fanex.CheckDataConsistency.Business.Criterias;
+namespace Fanex.CheckDataConsistency.Business.Criteria;
 
 public class CheckMBUTicketCountCriteria(string spName) : CriteriaBase
 {

@@ -20,6 +20,7 @@ services.AddOneBookUmForService(configuration);
 services.AddInternalService();
 
 services.AddHostedService<MainBackgroundRule53Service>();
+services.AddHostedService<MainBackgroundRule46Service>();
 
 var app = builder.Build();
 app.UseSwagger();

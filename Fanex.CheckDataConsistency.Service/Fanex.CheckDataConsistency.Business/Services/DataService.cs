@@ -1,5 +1,6 @@
-﻿using Fanex.CheckDataConsistency.Business.Criterias;
+﻿using Fanex.CheckDataConsistency.Business.Criteria;
 using Fanex.CheckDataConsistency.Business.Model;
+using Fanex.Data;
 using Fanex.Data.Repository;
 using Newtonsoft.Json;
 using System;
@@ -44,6 +45,14 @@ public interface DataService
     Dictionary<string, List<MBUTicketCountModel>> SelectSiteDBConsistencyCheckMBUTicketCount(int bettype);
 
     Dictionary<string, List<MBUTicketCountModel>> SelectDB05XDB06XConsistencyCheckMBUTicketCount(int bettype);
+
+    Dictionary<string, Rule46DTO> SelectSiteDBConsistencyCheckTicketCount();
+
+    List<ConsistencyCheckModelRule46> SelectConsistencyCheckTicketCount(ExecuteSPResultRule46 siteDBOutputResult);
+
+    List<ConsistencyCheckModelRule46> SelectDBXCheckTicketCount(string dbX, ExecuteSPResultRule46 siteDBOutputResult);
+
+    Result UpdateSiteDBSystemSetting(string siteDB, ExecuteSPResultRule46 siteDBOutputResult);
 }
 
 public class DataServiceImp(IDynamicRepository repository, Log log) : DataService
@@ -452,5 +461,84 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         });
 
         return dict;
+    }
+
+    private static ExecuteSPResultRule46 GetOutputResult(SiteDBRule46Criteria criteria)
+    {
+        var outputResult = new ExecuteSPResultRule46()
+        {
+            SiteDBGroupID = criteria.SiteDBGroupID,
+            TransferLastTransId = criteria.TransferLastTransId,
+            NewTransferLastTransId = criteria.NewTransferLastTransId,
+            CurrentTime = criteria.CurrentTime
+        };
+
+        return outputResult;
+    }
+
+    public Dictionary<string, Rule46DTO> SelectSiteDBConsistencyCheckTicketCount()
+    {
+        var siteDbs = QuerySiteDB(string.Empty);
+        var dict = new Dictionary<string, Rule46DTO>();
+        siteDbs.ForEach(siteDb =>
+        {
+            var siteDB = $"{Rule.Rule46}_{siteDb.LinkedServerName}";
+            var criteria = new SiteDBRule46Criteria(siteDB);
+            var data = new Rule46DTO();
+
+            using var db = ObjectDbFactory.CreateInstance(criteria.GetSettingKey(), 0);
+            data.SiteDBDataResult = db.Query<ConsistencyCheckModelRule46>(criteria).ToList();
+            data.SiteDBOutputResult = GetOutputResult(criteria);
+
+            dict.Add(siteDB, data);
+        });
+
+        return dict;
+    }
+
+    public List<ConsistencyCheckModelRule46> SelectConsistencyCheckTicketCount(ExecuteSPResultRule46 siteDBOutputResult)
+    {
+        var criteria = new ConsistencyCheckTicketCountTransferCriteria(string.Empty)
+        {
+            SiteDBGroupID = siteDBOutputResult.SiteDBGroupID,
+            TransferLastTransId = siteDBOutputResult.TransferLastTransId,
+            NewTransferLastTransId = siteDBOutputResult.NewTransferLastTransId
+        };
+
+        var result = repository.Fetch<ConsistencyCheckModelRule46>(criteria).ToList();
+
+        return result;
+    }
+
+    public List<ConsistencyCheckModelRule46> SelectDBXCheckTicketCount(string dbX, ExecuteSPResultRule46 siteDBOutputResult)
+    {
+        var criteria = new ConsistencyCheckTicketCountTransferCriteria(dbX)
+        {
+            SiteDBGroupID = siteDBOutputResult.SiteDBGroupID,
+            TransferLastTransId = siteDBOutputResult.TransferLastTransId,
+            NewTransferLastTransId = siteDBOutputResult.NewTransferLastTransId
+        };
+
+        var result = repository.Fetch<ConsistencyCheckModelRule46>(criteria).ToList();
+
+        return result;
+    }
+
+    public Result UpdateSiteDBSystemSetting(string siteDb, ExecuteSPResultRule46 siteDbOutputResult)
+    {
+        var result = new Result();
+        var cmd = new SiteDBSystemSettingUpdateCommand(siteDb)
+        {
+            CheckConsistencyKeyName = "SiteDB_CheckCons_Transfer_Count_LastTransId",
+            NewTransferLastTransId = siteDbOutputResult.NewTransferLastTransId
+        };
+
+        using var db = ObjectDbFactory.CreateInstance(cmd.GetSettingKey(), 0);
+        db.ExecuteNonQuery(cmd);
+
+        result.ErrCode = result.ErrCode;
+        result.ErrMsg = result.ErrMsg;
+
+        return result;
     }
 }

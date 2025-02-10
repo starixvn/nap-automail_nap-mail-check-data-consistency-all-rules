@@ -1,5 +1,4 @@
-﻿using Fanex.CheckDataConsistency.Business.Services;
-using System;
+﻿using System;
 
 namespace Fanex.CheckDataConsistency.Business.Model;
 
@@ -15,6 +14,10 @@ public class ConfigSettingModel
 
     public int MailIDRule4849Sub { get; set; }
 
+    public int MailIDRule46 { get; set; }
+
+    public bool IsUpdateData { get; set; }
+
     public bool LifeCycleCompleted
     {
         get
@@ -24,5 +27,5 @@ public class ConfigSettingModel
         }
     }
 
-    public bool SafeToRestart => !AppConfigService.IsOnProcessing && LifeCycleCompleted;
+    public bool SafeToRestart => LifeCycleCompleted;
 }

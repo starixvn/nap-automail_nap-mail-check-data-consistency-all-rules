@@ -10,7 +10,9 @@ public static class AppConfigService
 
     public static DateTime? CurrentTime { get; set; } = null;
 
-    public static bool IsOnProcessing { get; set; }
+    public static bool IsOnProcessingRule53 { get; set; }
+
+    public static bool IsOnProcessingRule46 { get; set; }
 
     public static Dictionary<string, List<RetryInfo>> RetryInfos { get; set; } = new()
     {
@@ -19,4 +21,6 @@ public static class AppConfigService
     };
 
     public static int RetryCount { get; set; }
+
+    public static Dictionary<string, Rule46DTO> DataSiteDBs { get; set; }
 }

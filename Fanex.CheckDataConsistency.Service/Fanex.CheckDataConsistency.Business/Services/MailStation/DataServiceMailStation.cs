@@ -1,4 +1,4 @@
-﻿using Fanex.CheckDataConsistency.Business.Criterias.MailStation;
+﻿using Fanex.CheckDataConsistency.Business.Criteria.MailStation;
 using Fanex.Data.Repository;
 using Fanex.MailDelivery.Core.Models;
 using Newtonsoft.Json;

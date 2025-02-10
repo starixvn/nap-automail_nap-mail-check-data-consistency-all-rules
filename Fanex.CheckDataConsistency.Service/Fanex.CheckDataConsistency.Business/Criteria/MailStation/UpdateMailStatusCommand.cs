@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
 using System;
 
-namespace Fanex.CheckDataConsistency.Business.Criterias.MailStation;
+namespace Fanex.CheckDataConsistency.Business.Criteria.MailStation;
 
 public class UpdateMailStatusCommand : NonQueryCommand
 {
