@@ -10,7 +10,7 @@ public class MainBackgroundRule53Service(MainRule53Service mainService, IMainten
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        const int periodicityInMinute = 1;
+        const int periodicityInMinute = 2;
         const int delay = periodicityInMinute * 60 * 1000;
 
         while (!stoppingToken.IsCancellationRequested)

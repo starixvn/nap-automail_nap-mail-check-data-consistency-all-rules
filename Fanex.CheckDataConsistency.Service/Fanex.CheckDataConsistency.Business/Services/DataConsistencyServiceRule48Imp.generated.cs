@@ -174,7 +174,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             string dbX,
             DateTime currentTime)
         {
-            int notExistsIndex = notExistsRows.Count;
+            int notExistsIndex = notExistsRows.Count + 1;
             dataSiteDB.Value.ForEach(siteDBRow =>
             {
                 var consisRow = dataConsistency.Item1.FirstOrDefault(s => s.TableName == siteDBRow.TableName

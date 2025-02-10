@@ -25,7 +25,7 @@ public class MainRule4849ServiceImp(
     private bool isHasData;
 
     private Timer timer;
-    private const int MaxRetry = 1;//4
+    private const int MaxRetry = 4;
 
     ~MainRule4849ServiceImp()
     {
@@ -36,7 +36,7 @@ public class MainRule4849ServiceImp(
     {
         const int milisecond = 1000;
         const int second = 60;
-        const int minute = 1;//5
+        const int minute = 5;
         timer = new Timer();
         timer.Interval = minute * second * milisecond;
         timer.Enabled = true;
