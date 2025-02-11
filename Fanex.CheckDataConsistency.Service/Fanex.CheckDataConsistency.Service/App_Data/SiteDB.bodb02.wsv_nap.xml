@@ -1,0 +1,28 @@
+﻿<Functions>
+	<Function Name="Scale Out DB">
+		<Setting Key="Rule48_DBSite01_SiteDB_DBA_Consistency_CheckTicketCount" SpName="SiteDB_DBA_Consistency_CheckTicketCount" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule48_DBSite02_SiteDB_DBA_Consistency_CheckTicketCount" SpName="SiteDB_DBA_Consistency_CheckTicketCount" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule48_DBSite03_SiteDB_DBA_Consistency_CheckTicketCount" SpName="SiteDB_DBA_Consistency_CheckTicketCount" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule49_DBSite01_SiteDB_DBA_Consistency_CheckSumTicket" SpName="SiteDB_DBA_Consistency_CheckSumTicket" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule49_DBSite02_SiteDB_DBA_Consistency_CheckSumTicket" SpName="SiteDB_DBA_Consistency_CheckSumTicket" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule49_DBSite03_SiteDB_DBA_Consistency_CheckSumTicket" SpName="SiteDB_DBA_Consistency_CheckSumTicket" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite01_DBA_Consistency_CheckDuplicatedBalanceUpTicket" SpName="DBA_Consistency_CheckDuplicatedBalanceUpTicket" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite01_DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite01_SiteDB_DBA_Consistency_CheckMBUTicketCount" SpName="SiteDB_DBA_Consistency_CheckMBUTicketCount" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite02_DBA_Consistency_CheckDuplicatedBalanceUpTicket" SpName="DBA_Consistency_CheckDuplicatedBalanceUpTicket" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite02_DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite02_SiteDB_DBA_Consistency_CheckMBUTicketCount" SpName="SiteDB_DBA_Consistency_CheckMBUTicketCount" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite03_DBA_Consistency_CheckDuplicatedBalanceUpTicket" SpName="DBA_Consistency_CheckDuplicatedBalanceUpTicket" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite03_DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule50_DBSite03_SiteDB_DBA_Consistency_CheckMBUTicketCount" SpName="SiteDB_DBA_Consistency_CheckMBUTicketCount" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule53_DBSite01_SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" SpName="SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule53_DBSite02_SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" SpName="SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule53_DBSite03_SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" SpName="SiteDB_DBA_Consistency_DetectSiteDBGroupID_Job" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite01_SiteDB_DBA_Consistency_SystemSetting_Update" SpName="SiteDB_DBA_Consistency_SystemSetting_Update" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite02_SiteDB_DBA_Consistency_SystemSetting_Update" SpName="SiteDB_DBA_Consistency_SystemSetting_Update" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite03_SiteDB_DBA_Consistency_SystemSetting_Update" SpName="SiteDB_DBA_Consistency_SystemSetting_Update" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite01_SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" SpName="SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite02_SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" SpName="SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule46_DBSite03_SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" SpName="SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+	</Function>
+</Functions>

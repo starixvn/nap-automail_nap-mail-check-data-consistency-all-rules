@@ -1,0 +1,129 @@
+﻿
+@{
+    var data = Model.Item1;
+    var rowIndex = 0;
+    var rowIndex2 = 0;
+    var rowSubIndex = 0;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:200px;">SP</td>
+                <td style="text-align:center; width:300px;">Message</td>
+                <td style="text-align:center; width:410px;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var messageModel in data)
+            {
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                    <td style="text-align:center;vertical-align:top">Failure</td>
+                    <td style="text-align:center;vertical-align:top">High</td>
+                    <td style="text-align:center;vertical-align:top">@messageModel.Rule</td>
+                    <td style="text-align:left;vertical-align:top">@messageModel.SPName</td>
+                    <td style="text-align:left;vertical-align:top">@messageModel.Message</td>
+                    <td style="text-align:left;vertical-align:top">
+                        <table border="1"
+                               id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                            <tr>
+                                <td style="text-align:center; width:30px">#</td>
+                                <td style="text-align:center; width:150px">DB</td>
+                                <td style="text-align:center">Detail Info</td>
+                            </tr>
+                            @foreach (var row in messageModel.Data)
+                            {
+                                rowIndex++;
+                                rowSubIndex = 0;
+                                <tr>
+                                    <td style="text-align:center">@rowIndex </td>
+                                    <td> @row.Key </td>
+                                    <td>
+                                        <table border="1"
+                                               id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tr>
+                                                <td style="width: 30px; text-align: center">#</td>
+                                                <td style="width: 100px; text-align: center">CustId</td>
+                                                <td style="width: 100px; text-align: center">WinlostDate</td>
+                                                <td style="width: 100px; text-align: center">TotalCount</td>
+                                            </tr>
+
+                                            @foreach (var sub in row.Value)
+                                            {
+                                                rowSubIndex++;
+                                                <tr>
+                                                    <td style="text-align:center">@rowSubIndex</td>
+                                                    <td style="text-align:right">@sub.CustId</td>
+                                                    <td style="text-align:right">@sub.WinlostDate.ToShortDateString()</td>
+                                                    <td style="text-align:right">@sub.TotalCount</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+
+                            @foreach (var row in messageModel.MBUData)
+                            {
+                                var index = row.Key.Split('-')[0];
+                                var db = row.Key.Split('-')[1];
+                                rowIndex2++;
+                                <tr>
+                                    @if (rowIndex2 % 2 == 1)
+                                    {
+                                        <td style="text-align:center" rowspan="2">@index </td>
+                                    }
+                                    <td>@db </td>
+                                    <td>
+                                        <table border="1"
+                                               id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tr>
+                                                <td style="width: 100px; text-align: center">SiteDBGroupID</td>
+                                                <td style="width: 100px; text-align: center">WinlostDate</td>
+                                                <td style="width: 100px; text-align: center">TotalCount</td>
+                                                <td style="width: 100px; text-align: center">TotalCheckSumAgg</td>
+                                            </tr>
+                                            <tr>
+                                                @if (row.Value != null)
+                                                {
+                                                    <td style="text-align:center">@row.Value.SiteDBGroupID</td>
+                                                    <td style="text-align:right">@row.Value.WinlostDate.ToShortDateString()</td>
+                                                    <td style="text-align:right">@row.Value.TotalCount.ToString("#,##0")</td>
+                                                    <td style="text-align:right">@row.Value.TotalCheckSumAgg.ToString("#,##0")</td>
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="4" style="text-align:center">There is no data</td>
+                                                }
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

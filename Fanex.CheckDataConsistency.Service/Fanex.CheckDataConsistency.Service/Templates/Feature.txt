@@ -1,0 +1,8 @@
+﻿https://nexdev.net/issues/175881
+
+Rule:
+- 48
+- 49
+- 50
+- 53
+- 54
