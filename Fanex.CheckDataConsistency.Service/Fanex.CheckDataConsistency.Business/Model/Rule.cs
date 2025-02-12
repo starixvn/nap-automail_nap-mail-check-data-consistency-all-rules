@@ -9,6 +9,9 @@ public static class Rule
     public const string Rule50MoveBet = "Rule50MoveBet";
     public const string Rule53 = "Rule53";
     public const string Rule46 = "Rule46";
+    public const string Rule47 = "Rule47";
+    public const string Rule51 = "Rule51";
+    public const string Rule52 = "Rule52";
     public const int TOP100 = 100;
     public const int TOP1 = 1;
 }

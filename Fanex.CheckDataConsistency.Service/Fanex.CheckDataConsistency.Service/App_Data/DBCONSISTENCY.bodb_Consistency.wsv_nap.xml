@@ -6,5 +6,9 @@
 		<Setting Key="DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
 		<Setting Key="DBA_Consistency_CheckMBUTicketCount" SpName="DBA_Consistency_CheckMBUTicketCount" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
 		<Setting Key="DBA_Consistency_CheckTicketCountAndChecksum_Transfer" SpName="DBA_Consistency_CheckTicketCountAndChecksum_Transfer" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
+		<Setting Key="DBA_Consistency_CheckWrongSiteGroupID_Transfer" SpName="DBA_Consistency_CheckWrongSiteGroupID_Transfer" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
+		<Setting Key="DBA_Consistency_SystemSetting_Select" SpName="DBA_Consistency_SystemSetting_Select" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
+		<Setting Key="DBA_Consistency_SystemSetting_Update" SpName="DBA_Consistency_SystemSetting_Update" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
+		<Setting Key="DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect" SpName="DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
 	</Function>
 </Functions>

@@ -52,7 +52,13 @@ public interface DataService
 
     List<ConsistencyCheckModelRule46> SelectDBXCheckTicketCount(string dbX, ExecuteSPResultRule46 siteDBOutputResult);
 
-    Result UpdateSiteDBSystemSetting(string siteDB, ExecuteSPResultRule46 siteDBOutputResult);
+    Result UpdateSiteDBSystemSettingRule46(string siteDB, ExecuteSPResultRule46 siteDBOutputResult);
+
+    Dictionary<string, Rule47DTO> QueryRule47();
+
+    List<ConsistencyRule51Model> QueryRule51(Result result);
+
+    Dictionary<string, List<ConsistencyRule52Model>> QueryRule52();
 }
 
 public class DataServiceImp(IDynamicRepository repository, Log log) : DataService
@@ -465,7 +471,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
 
     private static ExecuteSPResultRule46 GetOutputResult(SiteDBRule46Criteria criteria)
     {
-        var outputResult = new ExecuteSPResultRule46()
+        var outputResult = new ExecuteSPResultRule46
         {
             SiteDBGroupID = criteria.SiteDBGroupID,
             TransferLastTransId = criteria.TransferLastTransId,
@@ -524,21 +530,205 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         return result;
     }
 
-    public Result UpdateSiteDBSystemSetting(string siteDb, ExecuteSPResultRule46 siteDbOutputResult)
+    public Result UpdateSiteDBSystemSettingRule46(string siteDb, ExecuteSPResultRule46 siteDbOutputResult)
     {
-        var result = new Result();
-        var cmd = new SiteDBSystemSettingUpdateCommand(siteDb)
+        var cmd = new SiteDBSystemSettingUpdateRule46Command(siteDb)
         {
             CheckConsistencyKeyName = "SiteDB_CheckCons_Transfer_Count_LastTransId",
             NewTransferLastTransId = siteDbOutputResult.NewTransferLastTransId
         };
 
-        using var db = ObjectDbFactory.CreateInstance(cmd.GetSettingKey(), 0);
-        db.ExecuteNonQuery(cmd);
+        if (AppConfigService.Config.IsUpdateData)
+        {
+            repository.Execute(cmd);
+        }
 
-        result.ErrCode = result.ErrCode;
-        result.ErrMsg = result.ErrMsg;
+        var result = new Result
+        {
+            ErrCode = cmd.ErrCode,
+            ErrMsg = cmd.ErrMsg
+        };
 
         return result;
+    }
+
+    public Dictionary<string, Rule47DTO> QueryRule47()
+    {
+        var siteDbs = QuerySiteDB(string.Empty);
+        var dict = new Dictionary<string, Rule47DTO>();
+        const string rule = Rule.Rule47;
+        siteDbs.ForEach(siteDb =>
+        {
+            CallSiteDB(siteDb, dict, rule);
+        });
+
+        CallCentralDB(dict, rule);
+
+        return dict;
+    }
+
+    private void CallSiteDB(SiteDBModel siteDb, IDictionary<string, Rule47DTO> dict, string rule)
+    {
+        var siteDB = $"{rule}_{siteDb.LinkedServerName}";
+        var siteDBOutputResult = SelectSiteDBConsistencySystemSetting(siteDB);
+        var siteDBDataResult = ConsistencyCheckWrongSiteGroupIDTransfer(siteDBOutputResult);
+        var data = new Rule47DTO
+        {
+            DBOutputResult = siteDBOutputResult,
+            DBDataResult = siteDBDataResult,
+            SPNameOutputResult = "SiteDB_DBA_Consistency_SystemSetting_Select",
+            SPNameDataResult = "DBA_Consistency_CheckWrongSiteGroupID_Transfer"
+        };
+        var result = UpdateSiteDBSystemSetting(siteDB, siteDBOutputResult);
+        if (result.ErrCode > 0)
+        {
+            var errMsg = $"Fanex.CheckDataConsistencyRule47.Service: {result.ErrMsg}";
+            throw new Exception(errMsg);
+        }
+
+        dict.Add(siteDB, data);
+    }
+
+    private Result UpdateSiteDBSystemSetting(string siteDB, ExecuteSPResult siteDBOutputResult)
+    {
+        var cmd = new SiteDBSystemSettingUpdateCommand(siteDB)
+        {
+            CheckConsistencyKeyName = "SiteDB_CheckCons_Transfer_DiffSGId_LastTransId",
+            NewTransferLastTransId = siteDBOutputResult.NewTransferLastTransId
+        };
+
+        if (AppConfigService.Config.IsUpdateData)
+        {
+            repository.Execute(cmd);
+        }
+
+        var result = new Result
+        {
+            ErrCode = cmd.ErrCode,
+            ErrMsg = cmd.ErrMsg
+        };
+
+        return result;
+    }
+
+    private List<ConsistencyRule47Model> ConsistencyCheckWrongSiteGroupIDTransfer(ExecuteSPResult siteDBOutputResult)
+    {
+        var criteria = new ConsistencyCheckWrongSiteGroupIDTransferCriteria
+        {
+            SiteDBGroupID = siteDBOutputResult.SiteDBGroupID,
+            TransferLastTransId = siteDBOutputResult.TransferLastTransId,
+            NewTransferLastTransId = siteDBOutputResult.NewTransferLastTransId
+        };
+
+        return repository.Fetch<ConsistencyRule47Model>(criteria).ToList();
+    }
+
+    private void CallCentralDB(IDictionary<string, Rule47DTO> dict, string rule)
+    {
+        var siteDB = $"{rule}_{DB.DBCONSISTENCY}";
+        var centralDBOutputResult = ConsistencySystemSettingSelect();
+        var centralDBDataResult = ConsistencyCheckWrongSiteGroupIDTransfer(centralDBOutputResult);
+        var data = new Rule47DTO
+        {
+            DBOutputResult = centralDBOutputResult,
+            DBDataResult = centralDBDataResult,
+            SPNameOutputResult = "DBA_Consistency_SystemSetting_Select",
+            SPNameDataResult = "DBA_Consistency_CheckWrongSiteGroupID_Transfer"
+        };
+        var result = UpdateCentralDBSystemSetting(centralDBOutputResult);
+        if (result.ErrCode > 0)
+        {
+            var errMsg = $"Fanex.CheckDataConsistencyRule47.Service: {result.ErrMsg}";
+            throw new Exception(errMsg);
+        }
+
+        dict.Add(siteDB, data);
+    }
+
+    private Result UpdateCentralDBSystemSetting(ExecuteSPResult centralDBOutputResult)
+    {
+        var cmd = new CentralDBSystemSettingUpdateCommand
+        {
+            CheckConsistencyKeyName = "DiffSGId_LastTransId",
+            NewTransferLastTransId = centralDBOutputResult.NewTransferLastTransId
+        };
+
+        if (AppConfigService.Config.IsUpdateData)
+        {
+            repository.Execute(cmd);
+        }
+
+        var result = new Result
+        {
+            ErrCode = cmd.ErrCode,
+            ErrMsg = cmd.ErrMsg
+        };
+
+        return result;
+    }
+
+    private ExecuteSPResult ConsistencySystemSettingSelect()
+    {
+        var cmd = new ConsistencySystemSettingSelectCommand
+        {
+            CheckConsistencyKeyName = "DiffSGId_LastTransId"
+        };
+
+        repository.Execute(cmd);
+        var result = new ExecuteSPResult
+        {
+            TransferLastTransId = cmd.TransferLastTransId,
+            NewTransferLastTransId = cmd.NewTransferLastTransId,
+            ErrCode = cmd.ErrCode,
+            ErrMsg = cmd.ErrMsg
+        };
+        return result;
+    }
+
+    private ExecuteSPResult SelectSiteDBConsistencySystemSetting(string siteDB)
+    {
+        var cmd = new SiteDBConsistencySystemSettingSelectCommand(siteDB)
+        {
+            CheckConsistencyKeyName = "SiteDB_CheckCons_Transfer_DiffSGId_LastTransId"
+        };
+
+        repository.Execute(cmd);
+        var result = new ExecuteSPResult
+        {
+            SiteDBGroupID = cmd.SiteDBGroupID,
+            TransferLastTransId = cmd.TransferLastTransId,
+            NewTransferLastTransId = cmd.NewTransferLastTransId,
+            ErrCode = cmd.ErrCode,
+            ErrMsg = cmd.ErrMsg
+        };
+
+        return result;
+    }
+
+    public List<ConsistencyRule51Model> QueryRule51(Result result)
+    {
+        var criteria = new ConsistencyRule51Criteria();
+        return repository.Fetch<ConsistencyRule51Model>(criteria).ToList();
+    }
+
+    public Dictionary<string, List<ConsistencyRule52Model>> QueryRule52()
+    {
+        var siteDbs = QuerySiteDB(string.Empty);
+        var dict = new Dictionary<string, List<ConsistencyRule52Model>>();
+        const string rule = Rule.Rule52;
+        var index = 0;
+        siteDbs.ForEach(siteDb =>
+        {
+            index++;
+            var siteDB = $"{rule}_{siteDb.LinkedServerName}";
+            var criteria = new SiteDBConsistencyRule52Criteria(siteDB);
+            var rs = repository.Fetch<ConsistencyRule52Model>(criteria).ToList();
+            if (criteria.ErrCode > 0)
+            {
+                dict.Add($"{index}_{siteDb.LinkedServerName}", rs);
+            }
+        });
+
+        return dict;
     }
 }

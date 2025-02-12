@@ -17,6 +17,12 @@ public interface MailService
     Mail CreateMailRule53(List<MessageRule53Model> messageModels);
 
     Mail CreateMailRule46(List<MessageRule46Model> messageModels);
+
+    Mail CreateMailRule47(List<MessageRule47Model> messageModels);
+
+    Mail CreateMailRule51(List<MessageRule51Model> messageModels);
+
+    Mail CreateMailRule52(List<MessageRule52Model> messageModels);
 }
 
 public class MailServiceImp : MailService
@@ -134,6 +140,91 @@ public class MailServiceImp : MailService
         });
 
         var tuple = new Tuple<List<MessageRule46Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule47(List<MessageRule47Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule47(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule47
+        };
+    }
+
+    private static string LoadBodyRule47(List<MessageRule47Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule47.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule47Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule51(List<MessageRule51Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule51(messageModels),
+        };
+    }
+
+    private static string LoadBodyRule51(List<MessageRule51Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule51.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule51Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule52(List<MessageRule52Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule52(messageModels)
+        };
+    }
+
+    private static string LoadBodyRule52(List<MessageRule52Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule52.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule52Model>>(messageModels);
         return compiledTemplate.Run(tuple);
     }
 }
