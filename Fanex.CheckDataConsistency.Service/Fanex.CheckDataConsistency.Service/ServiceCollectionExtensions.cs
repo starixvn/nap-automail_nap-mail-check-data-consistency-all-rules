@@ -1,6 +1,7 @@
 ﻿using Fanex.CheckDataConsistency.Business.Model;
 using Fanex.CheckDataConsistency.Business.Services;
 using Fanex.CheckDataConsistency.Business.Services.MailStation;
+using Fanex.CheckDataConsistency.Service.Services;
 using Fanex.Data.Repository;
 using Fanex.MailDelivery.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +46,16 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DataConsistencyRule47Service, DataConsistencyRule47ServiceImp>();
         services.AddSingleton<DataConsistencyRule51Service, DataConsistencyRule51ServiceImp>();
         services.AddSingleton<DataConsistencyRule52Service, DataConsistencyRule52ServiceImp>();
+
+        services.AddSingleton<MainRule204Service, MainRule204ServiceImp>();
+        services.AddSingleton<MainRule205Service, MainRule205ServiceImp>();
+        services.AddSingleton<CompareRule204Service, CompareRule204ServiceImp>();
+        services.AddSingleton<CompareRule205Service, CompareRule205ServiceImp>();
+        services.AddSingleton<MainBackgroundRule46Service>();
+        services.AddSingleton<MainBackgroundRule47Service>();
+        services.AddSingleton<MainBackgroundRule53Service>();
+        services.AddSingleton<MainBackgroundRule204Service>();
+        services.AddSingleton<MainBackgroundRule205Service>();
 
         Services = services;
         MailClientHandler.Start();

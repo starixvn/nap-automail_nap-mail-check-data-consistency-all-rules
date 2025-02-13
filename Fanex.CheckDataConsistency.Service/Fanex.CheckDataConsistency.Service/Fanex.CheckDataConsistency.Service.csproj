@@ -13,7 +13,9 @@
     <None Remove="App_Data\DB062_DBACC.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DBACC.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DBCONSISTENCY.bodb_Consistency.wsv_nap.xml" />
+    <None Remove="App_Data\DBGLOB.GlobCustDB.wsv_nap.xml" />
     <None Remove="App_Data\DBMMS.bodb_MMS.wsv_nap.xml" />
+    <None Remove="App_Data\DBTP.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\SiteDB.bodb02.wsv_nap.xml" />
   </ItemGroup>
 
@@ -34,6 +36,9 @@
     <Content Include="App_Data\DBCONSISTENCY.bodb_Consistency.wsv_nap.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\DBGLOB.GlobCustDB.wsv_nap.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\DBMMS.bodb_MMS.wsv_nap.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -41,6 +46,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\DBACC.bodb02.wsv_nap.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\DBTP.bodb02.wsv_nap.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\SiteDB.bodb02.wsv_nap.xml">
@@ -75,6 +83,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="appsettings.UAT.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule204.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule205.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Templates\EmailTemplateRule46.cshtml">

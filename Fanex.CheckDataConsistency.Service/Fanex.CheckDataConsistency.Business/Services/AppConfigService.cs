@@ -12,9 +12,15 @@ public static class AppConfigService
 
     public static bool IsOnProcessingRule53 { get; set; }
 
+    public static bool IsIgnoreFirstExecuteRule53 { get; set; }
+
     public static bool IsOnProcessingRule46 { get; set; }
 
     public static bool IsOnProcessingRule47 { get; set; }
+
+    public static bool IsOnProcessingRule204 { get; set; }
+
+    public static bool IsOnProcessingRule205 { get; set; }
 
     public static Dictionary<string, List<RetryInfo>> RetryInfos { get; set; } = new()
     {

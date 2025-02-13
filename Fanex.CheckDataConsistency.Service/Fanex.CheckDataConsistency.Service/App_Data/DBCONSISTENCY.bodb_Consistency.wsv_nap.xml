@@ -10,5 +10,7 @@
 		<Setting Key="DBA_Consistency_SystemSetting_Select" SpName="DBA_Consistency_SystemSetting_Select" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
 		<Setting Key="DBA_Consistency_SystemSetting_Update" SpName="DBA_Consistency_SystemSetting_Update" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
 		<Setting Key="DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect" SpName="DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" Timeout="0" />
+		<Setting Key="CustomerSetting_DataConsistency_Config_SELECT" SpName="CustomerSetting_DataConsistency_Config_SELECT" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" TimeOut="0" />
+		<Setting Key="CustomerSetting_DataConsistency_Config_Update" SpName="CustomerSetting_DataConsistency_Config_Update" DbName="DBCONSISTENCY.bodb_Consistency.wsv_nap" TimeOut="0" />
 	</Function>
 </Functions>

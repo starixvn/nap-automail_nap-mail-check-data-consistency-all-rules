@@ -12,6 +12,7 @@ public class MainBackgroundRule46Service(MainRule46Service mainService, IMainten
     {
         const int periodicityInMinute = 15;
         const int delay = periodicityInMinute * 60 * 1000;
+        await Task.Delay(delay, stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
         {

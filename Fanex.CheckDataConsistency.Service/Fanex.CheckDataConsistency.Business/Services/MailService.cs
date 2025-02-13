@@ -23,6 +23,10 @@ public interface MailService
     Mail CreateMailRule51(List<MessageRule51Model> messageModels);
 
     Mail CreateMailRule52(List<MessageRule52Model> messageModels);
+
+    Mail CreateMailRule204(List<ResultModel> data);
+
+    Mail CreateMailRule205(List<ResultModel> data);
 }
 
 public class MailServiceImp : MailService
@@ -225,6 +229,62 @@ public class MailServiceImp : MailService
         });
 
         var tuple = new Tuple<List<MessageRule52Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule204(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule204(data)
+        };
+    }
+
+    private static string LoadBodyRule204(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule204.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule205(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule205(data)
+        };
+    }
+
+    private static string LoadBodyRule205(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule205.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
         return compiledTemplate.Run(tuple);
     }
 }

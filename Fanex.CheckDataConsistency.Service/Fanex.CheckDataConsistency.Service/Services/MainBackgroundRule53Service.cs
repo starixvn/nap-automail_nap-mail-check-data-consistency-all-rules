@@ -12,6 +12,8 @@ public class MainBackgroundRule53Service(MainRule53Service mainService, IMainten
     {
         const int periodicityInMinute = 2;
         const int delay = periodicityInMinute * 60 * 1000;
+        await Task.Delay(delay, stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
             // log.Log($"Fanex.CheckDataConsistency.Service - Rule 53 - {DateTime.Now}");

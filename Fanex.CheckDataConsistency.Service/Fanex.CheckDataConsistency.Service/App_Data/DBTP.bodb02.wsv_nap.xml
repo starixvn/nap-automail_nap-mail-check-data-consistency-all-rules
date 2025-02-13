@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Functions>
+	<Function SiteId="25" SiteName="Auto Mail">
+		<Setting Key="DBTP_DBA_Consistency_CustInfoMini_Checking" SpName="DBA_Consistency_CustInfoMini_Checking" DbName="DBTP.bodb02.wsv_nap" TimeOut="0" />
+		<Setting Key="DBTP_DBA_Consistency_CustSubMini_Checking" SpName="DBA_Consistency_CustSubMini_Checking" DbName="DBTP.bodb02.wsv_nap" TimeOut="0" />
+		<Setting Key="DBTP_DBA_Consistency_Customer_Checking" SpName="DBA_Consistency_Customer_Checking" DbName="DBTP.bodb02.wsv_nap" TimeOut="0" />
+		<Setting Key="DBTP_DBA_Consistency_CustSub_Checking" SpName="DBA_Consistency_CustSub_Checking" DbName="DBTP.bodb02.wsv_nap" TimeOut="0" />
+	</Function>
+</Functions>
