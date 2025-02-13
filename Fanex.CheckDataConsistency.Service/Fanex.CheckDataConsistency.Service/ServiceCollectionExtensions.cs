@@ -39,6 +39,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DataConsistencyRule46Service, DataConsistencyRule46ServiceImp>();
         services.AddSingleton<MainRule46Service, MainRule46ServiceImp>();
 
+        services.AddSingleton<MainRule47Service, MainRule47ServiceImp>();
+        services.AddSingleton<MainRule51Service, MainRule51ServiceImp>();
+        services.AddSingleton<MainRule52Service, MainRule52ServiceImp>();
+        services.AddSingleton<DataConsistencyRule47Service, DataConsistencyRule47ServiceImp>();
+        services.AddSingleton<DataConsistencyRule51Service, DataConsistencyRule51ServiceImp>();
+        services.AddSingleton<DataConsistencyRule52Service, DataConsistencyRule52ServiceImp>();
+
         Services = services;
         MailClientHandler.Start();
     }

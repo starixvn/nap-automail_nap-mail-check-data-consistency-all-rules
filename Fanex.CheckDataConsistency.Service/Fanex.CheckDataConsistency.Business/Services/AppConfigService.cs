@@ -14,6 +14,8 @@ public static class AppConfigService
 
     public static bool IsOnProcessingRule46 { get; set; }
 
+    public static bool IsOnProcessingRule47 { get; set; }
+
     public static Dictionary<string, List<RetryInfo>> RetryInfos { get; set; } = new()
     {
         { Rule.Rule48, [new RetryInfo()] },

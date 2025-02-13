@@ -80,6 +80,15 @@
     <Content Update="Templates\EmailTemplateRule46.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Templates\EmailTemplateRule47.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule51.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule52.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Templates\EmailTemplateRule53.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -178,7 +178,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             string siteDB,
             string dbX)
         {
-            int notExistsIndex = notExistsRows.Count;
+            int notExistsIndex = notExistsRows.Count + 1;
             dataSiteDB.Value.ForEach(siteDBRow =>
             {
                 var consisRow = dataConsistency.Item1.FirstOrDefault(s => s.TableName == siteDBRow.TableName
@@ -201,7 +201,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             string siteDB,
             string dbX)
         {
-            int diffIndex = diffRows.Count;
+            int diffIndex = diffRows.Count + 1;
             dataConsistency.Item1.ForEach(consisRow =>
             {
                 var siteDBRow = dataSiteDB.Value.FirstOrDefault(s => s.TableName == consisRow.TableName

@@ -11,7 +11,7 @@ public interface DataConsistencyRule46Service
 {
     List<MessageRule46Model> QueryData();
 
-    void UpdateSiteDBSystemSetting(Dictionary<string, Rule46DTO> dataSiteDBs);
+    void UpdateSiteDBSystemSettingRule46(Dictionary<string, Rule46DTO> dataSiteDBs);
 }
 
 public class DataConsistencyRule46ServiceImp(DataService dataService) : DataConsistencyRule46Service
@@ -218,13 +218,13 @@ public class DataConsistencyRule46ServiceImp(DataService dataService) : DataCons
         }
     }
 
-    public void UpdateSiteDBSystemSetting(Dictionary<string, Rule46DTO> dataSiteDBs)
+    public void UpdateSiteDBSystemSettingRule46(Dictionary<string, Rule46DTO> dataSiteDBs)
     {
         foreach (var dataSiteDB in dataSiteDBs)
         {
             var siteDBOutputResult = dataSiteDB.Value.SiteDBOutputResult;
             var siteDB = dataSiteDB.Key;
-            var resultSiteDB = dataService.UpdateSiteDBSystemSetting(siteDB, siteDBOutputResult);
+            var resultSiteDB = dataService.UpdateSiteDBSystemSettingRule46(siteDB, siteDBOutputResult);
 
             if (resultSiteDB.ErrCode > 0)
             {

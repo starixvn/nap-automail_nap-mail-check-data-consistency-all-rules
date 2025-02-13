@@ -16,6 +16,8 @@ public class ConfigSettingModel
 
     public int MailIDRule46 { get; set; }
 
+    public int MailIDRule47 { get; set; }
+
     public bool IsUpdateData { get; set; }
 
     public bool LifeCycleCompleted

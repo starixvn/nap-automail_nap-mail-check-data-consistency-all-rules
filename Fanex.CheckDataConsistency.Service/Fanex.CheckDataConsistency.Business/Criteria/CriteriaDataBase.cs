@@ -2,7 +2,7 @@
 
 namespace Fanex.CheckDataConsistency.Business.Criteria;
 
-public class CriteriaDataRule46(string spName) : CriteriaBase
+public class CriteriaDataBase(string spName) : CriteriaBase
 {
     public override string GetSettingKey() => spName;
 
