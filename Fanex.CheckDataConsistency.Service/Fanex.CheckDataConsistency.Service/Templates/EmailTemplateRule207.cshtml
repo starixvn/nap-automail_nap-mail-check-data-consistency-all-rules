@@ -1,0 +1,96 @@
+﻿@{
+    var data = Model.Item1;
+    int rowIndex = 0;    
+}
+
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                <td style="text-align:center;vertical-align:top">Failure</td>
+                <td style="text-align:center;vertical-align:top">High</td>
+                <td style="text-align: left; vertical-align: top">
+                    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                        <tr style="height: 25px">
+                            <td style="text-align:center;vertical-align:top">Rule</td>
+                            <td style="text-align:center;vertical-align:top">Detail</td>
+                        </tr>
+                        @foreach (var resultModel in data)
+                        {
+                            <tr style="height: 25px">
+                                <td style="width:500px;text-align:left;vertical-align:top">
+                                    <ul>
+                                        @foreach (string rule in resultModel.RulesList)
+                                        {
+                                            <li style="padding-bottom:5px">@rule</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>
+                                    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                        <tr style="height: 25px">
+                                            <td style="text-align:center;width:30px; font-weight:bold">#</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">DB</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">TableName</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">Recommend</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">Mrecommend</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">Srecommend</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">RowCount</td>
+                                            <td style="text-align:center;width:100px; font-weight:bold">CHECKSUM_Value</td>
+                                        </tr>
+                                        @foreach (var row in resultModel.DictResult)
+                                        {
+                                            <tr style="height: 25px">
+                                                @if (rowIndex % 2 == 0)
+                                                {
+                                                    <td rowspan="2" style="text-align:center">@row.Key.Split('_')[0]</td>
+                                                }
+
+                                                <td>@row.Key.Split('_')[1]</td>
+                                                @if (row.Value == null)
+                                                {
+                                                    <td colspan="6" style="text-align:center">There is no data.</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="text-align:left">@row.Value.TableName</td>
+                                                    <td style="text-align:right">@row.Value.Recommend</td>
+                                                    <td style="text-align:right">@row.Value.Mrecommend</td>
+                                                    <td style="text-align:right">@row.Value.Srecommend</td>
+                                                    <td style="text-align:right">@row.Value.RowCount.ToString("N0")</td>
+                                                    <td style="text-align:right">@row.Value.CHECKSUM_Value.ToString("N0")</td>
+                                                }
+                                            </tr>
+                                            rowIndex++;
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

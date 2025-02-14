@@ -33,7 +33,7 @@ public class MainRule204ServiceImp(
         }
         catch (Exception e)
         {
-            AppConfigService.IsOnProcessingRule204 = true;
+            AppConfigService.IsOnProcessingRule204 = false;
             log.Log(e);
         }
     }

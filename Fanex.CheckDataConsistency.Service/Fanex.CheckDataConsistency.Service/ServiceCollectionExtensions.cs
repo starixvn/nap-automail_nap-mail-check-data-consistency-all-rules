@@ -26,36 +26,46 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<Log, LogImp>();
         services.AddSingleton<DataService, DataServiceImp>();
+        services.AddSingleton<DataServiceRule206, DataServiceRule206Imp>();
+        services.AddSingleton<DataServiceRule207, DataServiceRule207Imp>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
-        services.AddSingleton<MainRule4849Service, MainRule4849ServiceImp>();
-        services.AddSingleton<MainRule50Service, MainRule50ServiceImp>();
-        services.AddSingleton<MainRule53Service, MainRule53ServiceImp>();
+
         services.AddSingleton<MailService, MailServiceImp>();
         services.AddSingleton<RefineDataService, RefineDataServiceImp>();
         services.AddSingleton<DataConsistencyRule4849ProviderService, DataConsistencyRule4849ProviderServiceImp>();
         services.AddSingleton<DataConsistencyRule50ProviderService, DataConsistencyRule50ProviderServiceImp>();
         services.AddSingleton<DataConsistencyRule53Service, DataConsistencyRule53ServiceImp>();
         services.AddSingleton<DataServiceMailStation, DataServiceMailStationImp>();
-
         services.AddSingleton<DataConsistencyRule46Service, DataConsistencyRule46ServiceImp>();
-        services.AddSingleton<MainRule46Service, MainRule46ServiceImp>();
 
+        services.AddSingleton<MainRule4849Service, MainRule4849ServiceImp>();
+        services.AddSingleton<MainRule50Service, MainRule50ServiceImp>();
+        services.AddSingleton<MainRule53Service, MainRule53ServiceImp>();
+        services.AddSingleton<MainRule46Service, MainRule46ServiceImp>();
         services.AddSingleton<MainRule47Service, MainRule47ServiceImp>();
         services.AddSingleton<MainRule51Service, MainRule51ServiceImp>();
         services.AddSingleton<MainRule52Service, MainRule52ServiceImp>();
+        services.AddSingleton<MainRule204Service, MainRule204ServiceImp>();
+        services.AddSingleton<MainRule205Service, MainRule205ServiceImp>();
+        services.AddSingleton<MainRule206Service, MainRule206ServiceImp>();
+        services.AddSingleton<MainRule207Service, MainRule207ServiceImp>();
+
         services.AddSingleton<DataConsistencyRule47Service, DataConsistencyRule47ServiceImp>();
         services.AddSingleton<DataConsistencyRule51Service, DataConsistencyRule51ServiceImp>();
         services.AddSingleton<DataConsistencyRule52Service, DataConsistencyRule52ServiceImp>();
 
-        services.AddSingleton<MainRule204Service, MainRule204ServiceImp>();
-        services.AddSingleton<MainRule205Service, MainRule205ServiceImp>();
         services.AddSingleton<CompareRule204Service, CompareRule204ServiceImp>();
         services.AddSingleton<CompareRule205Service, CompareRule205ServiceImp>();
+        services.AddSingleton<CompareRule206Service, CompareRule206ServiceImp>();
+        services.AddSingleton<CompareRule207Service, CompareRule207ServiceImp>();
+
         services.AddSingleton<MainBackgroundRule46Service>();
         services.AddSingleton<MainBackgroundRule47Service>();
         services.AddSingleton<MainBackgroundRule53Service>();
         services.AddSingleton<MainBackgroundRule204Service>();
         services.AddSingleton<MainBackgroundRule205Service>();
+        services.AddSingleton<MainBackgroundRule206Service>();
+        services.AddSingleton<MainBackgroundRule207Service>();
 
         Services = services;
         MailClientHandler.Start();

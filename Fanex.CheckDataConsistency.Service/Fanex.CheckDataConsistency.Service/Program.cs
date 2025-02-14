@@ -24,6 +24,8 @@ services.AddHostedService<MainBackgroundRule46Service>();
 services.AddHostedService<MainBackgroundRule47Service>();
 services.AddHostedService<MainBackgroundRule204Service>();
 services.AddHostedService<MainBackgroundRule205Service>();
+services.AddHostedService<MainBackgroundRule206Service>();
+services.AddHostedService<MainBackgroundRule207Service>();
 
 var app = builder.Build();
 app.UseSwagger();

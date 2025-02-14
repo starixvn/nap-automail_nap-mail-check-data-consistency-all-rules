@@ -6,5 +6,7 @@
 		<Setting Key="DB061_DBA_Consistency_CheckDuplicatedMoveBetTicket" SpName="DBA_Consistency_CheckDuplicatedMoveBetTicket" DbName="DB061_DBACC.bodb02.wsv_nap" Timeout="0" />
 		<Setting Key="DB061_DBA_Consistency_CheckMBUTicketCount" SpName="DBA_Consistency_CheckMBUTicketCount" DbName="DB061_DBACC.bodb02.wsv_nap" Timeout="0" />
 		<Setting Key="DB061_DBA_Consistency_CheckTicketCountAndChecksum_Transfer" SpName="DBA_Consistency_CheckTicketCountAndChecksum_Transfer" DbName="DB061_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB061_DBA_Consistency_Customer_InhouseRepl_Checking" SpName="DBA_Consistency_Customer_InhouseRepl_Checking" DbName="DB061_DBACC.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB061_DBA_Consistency_CustInfo_InhouseRepl_Checking" SpName="DBA_Consistency_CustInfo_InhouseRepl_Checking" DbName="DB061_DBACC.bodb02.wsv_nap" Timeout="0" />
 	</Function>
 </Functions>

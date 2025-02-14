@@ -27,6 +27,10 @@ public interface MailService
     Mail CreateMailRule204(List<ResultModel> data);
 
     Mail CreateMailRule205(List<ResultModel> data);
+
+    Mail CreateMailRule206(List<ResultModel> data);
+
+    Mail CreateMailRule207(List<ResultModel> data);
 }
 
 public class MailServiceImp : MailService
@@ -273,6 +277,62 @@ public class MailServiceImp : MailService
     private static string LoadBodyRule205(List<ResultModel> data)
     {
         const string templatePath = "Templates/EmailTemplateRule205.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule206(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule206(data)
+        };
+    }
+
+    private static string LoadBodyRule206(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule206.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule207(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule207(data)
+        };
+    }
+
+    private static string LoadBodyRule207(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule207.cshtml";
         var hashCode = templatePath.GetHashCode();
         var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
         {
