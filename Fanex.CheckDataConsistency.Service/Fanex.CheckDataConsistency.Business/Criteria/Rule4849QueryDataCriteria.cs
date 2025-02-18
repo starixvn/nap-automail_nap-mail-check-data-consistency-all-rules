@@ -9,7 +9,7 @@ public class Rule4849QueryDataCriteria(string spName) : CriteriaBase
 
     public DateTime CurrentTime { get; set; }
 
-    public string RecommendList { get; set; }
+    public string SMAListJson { get; set; }
 
     public string TableName { get; set; }
 

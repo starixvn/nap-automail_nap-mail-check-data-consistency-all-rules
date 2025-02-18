@@ -108,7 +108,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             {
                 var key = $"{Rule.Rule48}_{siteDb.LinkedServerName}";
                 var spName = $"{key}_SiteDB_DBA_Consistency_CheckTicketCount";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var timeStart = DateTime.Now;
                 var data = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var timeEnd = DateTime.Now;
@@ -137,6 +137,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         foreach (var item in distinctRetry)
         {
             var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
+
             retryInfoFinal.Add(new RetryInfo { TableName = item.Key.TableName, RecommendList = recommends });
         }
 
@@ -149,7 +150,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 recommendList = reTryInfo.RecommendList;
                 tableName = reTryInfo.TableName;
                 var spName = $"{db}_DBA_Consistency_CheckTicketCount";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var timeStart = DateTime.Now;
                 var dataDbX = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var timeEnd = DateTime.Now;
@@ -177,7 +178,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         {
             var tableName = retryInfo.TableName;
             var recommendList = retryInfo.RecommendList;
-            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
             var startTime = DateTime.Now;
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
@@ -203,7 +204,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             var recommendList = retryInfo.RecommendList;
             var tableName = retryInfo.TableName;
 
-            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
             var startTime = DateTime.Now;
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
@@ -244,7 +245,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             {
                 var key = $"{Rule.Rule49}_{siteDb.LinkedServerName}";
                 var spName = $"{key}_SiteDB_DBA_Consistency_CheckSumTicket";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var data = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 data.ForEach(row =>
                 {
@@ -287,7 +288,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 recommendList = retryInfo.RecommendList;
                 var spName = $"{db}_DBA_Consistency_CheckSumTicket";
                 var startTime = DateTime.Now;
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var dataDbX = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var endTime = DateTime.Now;
                 var duration = endTime - startTime;

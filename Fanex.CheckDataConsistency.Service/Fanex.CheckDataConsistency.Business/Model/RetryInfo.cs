@@ -1,4 +1,6 @@
-﻿namespace Fanex.CheckDataConsistency.Business.Model;
+﻿using System.Collections.Generic;
+
+namespace Fanex.CheckDataConsistency.Business.Model;
 
 public class RetryInfo
 {
@@ -9,4 +11,6 @@ public class RetryInfo
     public string TableName { get; set; }
 
     public string RecommendList { get; set; }
+
+    public List<SMAModel> SMAList { get; set; } = [];
 }

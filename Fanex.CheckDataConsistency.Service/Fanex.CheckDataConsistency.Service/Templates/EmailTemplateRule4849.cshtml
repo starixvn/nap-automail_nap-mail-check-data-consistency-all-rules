@@ -88,6 +88,8 @@
                                                 <td style="width: 100px; text-align: center">TableName</td>
                                                 <td style="width: 100px; text-align: center">SiteDBGroupID</td>
                                                 <td style="width: 100px; text-align: center">Recommend</td>
+                                                <td style="width: 100px; text-align: center">Mrecommend</td>
+                                                <td style="width: 100px; text-align: center">Srecommend</td>
                                                 @if (messageModel.Rule == "#48")
                                                 {
                                                     <td style="width: 100px; text-align: center">Status</td>
@@ -108,6 +110,8 @@
                                                     <td>@row.Value.TableName</td>
                                                     <td style="text-align:right">@row.Value.SiteDBGroupID</td>
                                                     <td style="text-align:right">@row.Value.Recommend</td>
+                                                    <td style="text-align:right">@row.Value.Mrecommend</td>
+                                                    <td style="text-align:right">@row.Value.Srecommend</td>
                                                     @if (messageModel.Rule == "#48")
                                                     {
                                                         <td>@row.Value.Status</td>
@@ -121,7 +125,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <td colspan="5" style="text-align:center">There is no data</td>
+                                                    <td colspan="7" style="text-align:center">There is no data</td>
                                                 }
                                             </tr>
                                         </table>
