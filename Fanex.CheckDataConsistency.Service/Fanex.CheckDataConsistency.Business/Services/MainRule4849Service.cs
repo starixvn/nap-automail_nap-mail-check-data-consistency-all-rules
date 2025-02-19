@@ -29,7 +29,7 @@ public class MainRule4849ServiceImp(
 
     ~MainRule4849ServiceImp()
     {
-        Dispose(false);
+        Dispose();
     }
 
     private void Register()
@@ -46,20 +46,20 @@ public class MainRule4849ServiceImp(
 
     private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] at {DateTime.Now}");
-        if (!AppConfigService.IsOnProcessingRule53)
+        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] at {DateTime.Now}");
+        if (!AppConfigService.IsOnProcessingRule4849)
         {
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] BEGIN at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] BEGIN at {DateTime.Now}");
             QueryData();
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule53}] END at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] END at {DateTime.Now}");
         }
     }
 
     private void QueryData()
     {
-        AppConfigService.IsOnProcessingRule53 = true;
+        AppConfigService.IsOnProcessingRule4849 = true;
         Execute();
-        AppConfigService.IsOnProcessingRule53 = false;
+        AppConfigService.IsOnProcessingRule4849 = false;
     }
 
     public JobMessage Execute()
@@ -84,7 +84,7 @@ public class MainRule4849ServiceImp(
         }
         finally
         {
-            AppConfigService.IsOnProcessingRule53 = false;
+            AppConfigService.IsOnProcessingRule4849 = false;
             JobStatus jobStatus;
             jobMessage.Mail = result.Mail;
 
@@ -181,10 +181,8 @@ public class MainRule4849ServiceImp(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            timer.Dispose();
-            timer = null;
-        }
+        if (!disposing) return;
+        timer?.Dispose();
+        timer = null;
     }
 }

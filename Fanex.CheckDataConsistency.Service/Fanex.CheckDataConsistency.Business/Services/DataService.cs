@@ -136,9 +136,19 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         var distinctRetry = reTryInfos.GroupBy(g => new { g.TableName });
         foreach (var item in distinctRetry)
         {
-            var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
+            var smaList = new List<SMAModel>();
+            item.ToList().ForEach(row =>
+            {
+                smaList.AddRange(row.SMAList);
+            });
+            var shortSMAList = new List<SMAModel>();
+            smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
+            {
+                shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+            });
 
-            retryInfoFinal.Add(new RetryInfo { TableName = item.Key.TableName, RecommendList = recommends });
+            recommendList = item.Key.TableName == null ? null : JsonConvert.SerializeObject(shortSMAList, Formatting.Indented);
+            retryInfoFinal.Add(new RetryInfo { TableName = item.Key!.TableName, SMAList = shortSMAList, RecommendList = recommendList });
         }
 
         var dbs = DB.DB05X06X;
@@ -263,8 +273,8 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
 
     public Dictionary<string, List<ConsistencyCheckModel>> Rule49SelectDB05XDB06XConsistencyCheckSumTicket(DateTime currentTime)
     {
-        string recommendList;
         string tableName;
+        string recommendList;
 
         var dict = new Dictionary<string, List<ConsistencyCheckModel>>();
         var retryInfos = AppConfigService.RetryInfos[Rule.Rule49];
@@ -274,8 +284,18 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         var distinctRetry = retryInfos.GroupBy(g => new { g.TableName });
         foreach (var item in distinctRetry)
         {
-            var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
-            retryInfoFinal.Add(new RetryInfo { TableName = item.Key.TableName, RecommendList = recommends });
+            var smaList = new List<SMAModel>();
+            item.ToList().ForEach(row =>
+            {
+                smaList.AddRange(row.SMAList);
+            });
+            var shortSMAList = new List<SMAModel>();
+            smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
+            {
+                shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+            });
+            recommendList = item.Key.TableName == null ? null : JsonConvert.SerializeObject(shortSMAList, Formatting.Indented);
+            retryInfoFinal.Add(new RetryInfo { TableName = item.Key!.TableName, SMAList = shortSMAList, RecommendList = recommendList });
         }
 
         var dbs = DB.DB05X06X;

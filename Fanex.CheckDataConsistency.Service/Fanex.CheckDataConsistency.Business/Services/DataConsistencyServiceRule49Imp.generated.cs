@@ -75,7 +75,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                 var shortSMAList = new List<SMAModel>();
                 smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
                 {
-                    shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Recommend, Srecommend = sma.Key.Srecommend });
+                    shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
                 });
 
                 retryInfoFinal.Add(new RetryInfo { Rule = Rule.Rule49, SiteDB = item.Key.SiteDB, TableName = item.Key.TableName, SMAList = shortSMAList, RecommendList = JsonConvert.SerializeObject(shortSMAList, Formatting.Indented) });
@@ -161,7 +161,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                         .ToList()
                         .ForEach(sma =>
                         {
-                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Recommend, Srecommend = sma.Key.Srecommend });
+                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
                         });
                     retryInfo.Add(new RetryInfo
                     {
@@ -183,7 +183,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                         .ToList()
                         .ForEach(sma =>
                         {
-                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Recommend, Srecommend = sma.Key.Srecommend });
+                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
                         });
                     retryInfo.Add(new RetryInfo
                     {

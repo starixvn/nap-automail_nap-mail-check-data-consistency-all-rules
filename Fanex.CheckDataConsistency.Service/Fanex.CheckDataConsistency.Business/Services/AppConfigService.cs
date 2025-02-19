@@ -10,9 +10,7 @@ public static class AppConfigService
 
     public static DateTime? CurrentTime { get; set; } = null;
 
-    public static bool IsOnProcessingRule53 { get; set; }
-
-    public static bool IsIgnoreFirstExecuteRule53 { get; set; }
+    public static bool IsOnProcessingRule4849 { get; set; }
 
     public static bool IsOnProcessingRule46 { get; set; }
 
