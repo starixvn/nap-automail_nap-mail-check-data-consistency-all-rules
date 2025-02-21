@@ -46,12 +46,12 @@ public class MainRule4849ServiceImp(
 
     private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] at {DateTime.Now}");
+        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] at {DateTime.Now}");
         if (!AppConfigService.IsOnProcessingRule4849)
         {
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] BEGIN at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] BEGIN at {DateTime.Now}");
             QueryData();
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCount}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] END at {DateTime.Now}");
+            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] END at {DateTime.Now}");
         }
     }
 
@@ -115,27 +115,27 @@ public class MainRule4849ServiceImp(
         if (!AppConfigService.CurrentTime.HasValue)
         {
             AppConfigService.CurrentTime = currentTime;
-            AppConfigService.RetryCount = 0;
+            AppConfigService.RetryCountRule4849 = 0;
         }
         else
         {
             currentTime = AppConfigService.CurrentTime.Value;
-            AppConfigService.RetryCount++;
+            AppConfigService.RetryCountRule4849++;
             var retryInfo = JsonConvert.SerializeObject(AppConfigService.RetryInfos, Formatting.Indented);
-            log.Log($"Retrying the Rule 48-49: {AppConfigService.RetryCount} times at {DateTime.Now}, {Environment.NewLine} {retryInfo}");
+            log.Log($"Retrying the Rule 48-49: {AppConfigService.RetryCountRule4849} times at {DateTime.Now}, {Environment.NewLine} {retryInfo}");
         }
 
         var messageModels = refineDataService.SelectDifferentDataRule4849(currentTime);
         var mail = mailService.CreateMailRule4849(messageModels, currentTime);
         isHasData = messageModels.Count > 0;
 
-        if (isHasData && AppConfigService.RetryCount > MaxRetry)
+        if (isHasData && AppConfigService.RetryCountRule4849 > MaxRetry)
         {
             mail.MailingListId = AppConfigService.Config.MailIDRule4849Sub;
             MailClientHandler.SendFunctionMail(mail);
         }
 
-        if (AppConfigService.RetryCount > MaxRetry)
+        if (AppConfigService.RetryCountRule4849 > MaxRetry)
         {
             StopRetry(true);
         }
@@ -166,7 +166,7 @@ public class MainRule4849ServiceImp(
         }
 
         AppConfigService.CurrentTime = null;
-        AppConfigService.RetryCount = 0;
+        AppConfigService.RetryCountRule4849 = 0;
         AppConfigService.RetryInfos = new Dictionary<string, List<RetryInfo>>
         {
             { Rule.Rule48, [new RetryInfo()] },

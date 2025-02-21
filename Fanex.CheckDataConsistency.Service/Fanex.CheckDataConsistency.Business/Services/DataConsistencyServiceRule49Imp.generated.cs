@@ -30,7 +30,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var jsonDataSiteDBs = JsonConvert.SerializeObject(dataSiteDBs, Formatting.Indented);
             var jsonDataConsistency = JsonConvert.SerializeObject(dataConsistency, Formatting.Indented);
             var jsonDataDb05X06x = JsonConvert.SerializeObject(dataDb05X06x, Formatting.Indented);
-            var date = $"{DateTime.Today:yyyyMMdd}-Retry-{AppConfigService.RetryCount}";
+            var date = $"{DateTime.Today:yyyyMMdd}-Retry-{AppConfigService.RetryCountRule4849}";
             var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
             Directory.CreateDirectory(path);
             File.WriteAllText($"{path}/{Rule.Rule49}-{date}-DataSiteDBs.json", jsonDataSiteDBs);
@@ -84,7 +84,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var countRecommendList = recommendList.Count > 0 ? recommendList.Max() : 0;
             var isNeedResetRule49 = countRecommendList > 100;
 
-            if (AppConfigService.RetryCount > 0 && retryInfoFinal.Count == 0)
+            if (AppConfigService.RetryCountRule4849 > 0 && retryInfoFinal.Count == 0)
             {
                 retryInfoFinal.Add(new RetryInfo()
                 {
@@ -110,7 +110,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                 AppConfigService.RetryInfos.Add(Rule.Rule49, retryInfoFinal);
             }
             var jSonRetryInfo = JsonConvert.SerializeObject(AppConfigService.RetryInfos, Formatting.Indented);
-            log.Log($"Retrying the Rule 48-49: [Rule49] {AppConfigService.RetryCount} times at {DateTime.Now}, {Environment.NewLine} {jSonRetryInfo}");
+            log.Log($"Retrying the Rule 48-49: [Rule49] {AppConfigService.RetryCountRule4849} times at {DateTime.Now}, {Environment.NewLine} {jSonRetryInfo}");
 
             var notExistsModel = new MessageRule4849Model
             {

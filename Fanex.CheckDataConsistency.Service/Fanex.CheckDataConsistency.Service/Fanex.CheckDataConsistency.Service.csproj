@@ -128,6 +128,9 @@
     <Content Update="appsettings.UAT.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Templates\EmailTemplate200201202203.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Templates\EmailTemplateRule207.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

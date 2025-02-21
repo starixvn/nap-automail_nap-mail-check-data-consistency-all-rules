@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DataService, DataServiceImp>();
         services.AddSingleton<DataServiceRule206, DataServiceRule206Imp>();
         services.AddSingleton<DataServiceRule207, DataServiceRule207Imp>();
+        services.AddSingleton<DataServiceRule200201202203, DataServiceRule200201202203Imp>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
 
         services.AddSingleton<MailService, MailServiceImp>();
@@ -49,10 +50,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainRule205Service, MainRule205ServiceImp>();
         services.AddSingleton<MainRule206Service, MainRule206ServiceImp>();
         services.AddSingleton<MainRule207Service, MainRule207ServiceImp>();
+        services.AddSingleton<MainRule200201202203Service, MainRule200201202203ServiceImp>();
 
         services.AddSingleton<DataConsistencyRule47Service, DataConsistencyRule47ServiceImp>();
         services.AddSingleton<DataConsistencyRule51Service, DataConsistencyRule51ServiceImp>();
         services.AddSingleton<DataConsistencyRule52Service, DataConsistencyRule52ServiceImp>();
+        services.AddSingleton<DataConsistencyRule200201202203Service, DataConsistencyRule200201202203ServiceImp>();
 
         services.AddSingleton<CompareRule204Service, CompareRule204ServiceImp>();
         services.AddSingleton<CompareRule205Service, CompareRule205ServiceImp>();

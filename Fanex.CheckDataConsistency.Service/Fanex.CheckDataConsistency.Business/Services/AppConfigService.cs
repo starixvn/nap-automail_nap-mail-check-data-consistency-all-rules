@@ -30,7 +30,11 @@ public static class AppConfigService
         { Rule.Rule49, [new RetryInfo()] }
     };
 
-    public static int RetryCount { get; set; }
+    public static int RetryCountRule4849 { get; set; }
+
+    public static int RetryCountRule200201202203 { get; set; }
+
+    public static TimeModel TimeModel { get; set; } = new();
 
     public static Dictionary<string, Rule46DTO> DataSiteDBs { get; set; }
 }

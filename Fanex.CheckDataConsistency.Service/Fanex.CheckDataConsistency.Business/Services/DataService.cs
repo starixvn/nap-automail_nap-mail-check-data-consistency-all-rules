@@ -117,7 +117,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 dict.Add($"{key}_{count}", data);
                 count++;
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             });
         }
 
@@ -167,7 +167,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 var duration = timeEnd - timeStart;
                 data.AddRange(dataDbX);
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             }
 
             dict.Add($"{db}_{count}", data);
@@ -193,7 +193,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
             var duration = endTime - startTime;
-            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
+            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
             data1.AddRange(result.Item1.ToList());
             data2.AddRange(result.Item2.ToList());
         }
@@ -219,7 +219,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
             var duration = endTime - startTime;
-            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
+            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
 
             result.FirstResultSet.ToList().ForEach(row =>
             {
@@ -314,7 +314,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 var duration = endTime - startTime;
                 data.AddRange(dataDbX);
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             }
 
             dict.Add($"{db}_{count}", data);
