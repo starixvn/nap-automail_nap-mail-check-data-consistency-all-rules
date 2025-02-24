@@ -33,6 +33,8 @@ public interface MailService
     Mail CreateMailRule207(List<ResultModel> data);
 
     Mail CreateMailRule200201202203(List<SettingDiffDto> data);
+
+    Mail CreateMailRule55(MessageRule55Model messageModels);
 }
 
 public class MailServiceImp : MailService
@@ -375,6 +377,35 @@ public class MailServiceImp : MailService
         });
 
         var tuple = new Tuple<List<SettingDiffDto>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule55(MessageRule55Model messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule55(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule55
+        };
+    }
+
+    private static string LoadBodyRule55(MessageRule55Model messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule55.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<MessageRule55Model>(messageModels);
         return compiledTemplate.Run(tuple);
     }
 }

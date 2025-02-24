@@ -1,3 +1,4 @@
+using Fanex.CheckDataConsistency.Business.Services;
 using Fanex.CheckDataConsistency.Service;
 using Fanex.CheckDataConsistency.Service.Services;
 using Fanex.Data.SqlServer;
@@ -18,6 +19,11 @@ services.AddFanexSql(configuration);
 services.AddFanexLogSentry(configuration);
 services.AddOneBookUmForService(configuration);
 services.AddInternalService();
+
+if (AppConfigService.Config.IsUpdateData)
+{
+    services.AddHostedService<MainBackgroundRule55Service>();
+}
 
 services.AddHostedService<MainBackgroundRule53Service>();
 services.AddHostedService<MainBackgroundRule46Service>();

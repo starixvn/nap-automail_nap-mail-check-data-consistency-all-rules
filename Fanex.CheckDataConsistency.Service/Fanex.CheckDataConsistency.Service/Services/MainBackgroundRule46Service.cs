@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fanex.CheckDataConsistency.Service.Services;
 
-public class MainBackgroundRule46Service(MainRule46Service mainService, IMaintenanceService um, Log log) : BackgroundService
+public class MainBackgroundRule46Service(MainRule46Service mainService, IMaintenanceService um) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -16,7 +16,6 @@ public class MainBackgroundRule46Service(MainRule46Service mainService, IMainten
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            // log.Log($"Fanex.CheckDataConsistency.Service - Rule 46 - {DateTime.Now}");
             if (await um.IsUnderMaintenanceAsync())
             {
                 continue;

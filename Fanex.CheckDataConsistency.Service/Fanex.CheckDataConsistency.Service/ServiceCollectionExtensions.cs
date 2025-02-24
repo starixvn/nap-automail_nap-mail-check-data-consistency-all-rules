@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DataServiceRule206, DataServiceRule206Imp>();
         services.AddSingleton<DataServiceRule207, DataServiceRule207Imp>();
         services.AddSingleton<DataServiceRule200201202203, DataServiceRule200201202203Imp>();
+        services.AddSingleton<DataServiceRule55, DataServiceRule55Imp>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
 
         services.AddSingleton<MailService, MailServiceImp>();
@@ -51,11 +52,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainRule206Service, MainRule206ServiceImp>();
         services.AddSingleton<MainRule207Service, MainRule207ServiceImp>();
         services.AddSingleton<MainRule200201202203Service, MainRule200201202203ServiceImp>();
+        services.AddSingleton<MainRule55Service, MainRule55ServiceImp>();
 
         services.AddSingleton<DataConsistencyRule47Service, DataConsistencyRule47ServiceImp>();
         services.AddSingleton<DataConsistencyRule51Service, DataConsistencyRule51ServiceImp>();
         services.AddSingleton<DataConsistencyRule52Service, DataConsistencyRule52ServiceImp>();
         services.AddSingleton<DataConsistencyRule200201202203Service, DataConsistencyRule200201202203ServiceImp>();
+        services.AddSingleton<DataConsistencyRule55Service, DataConsistencyRule55ServiceImp>();
 
         services.AddSingleton<CompareRule204Service, CompareRule204ServiceImp>();
         services.AddSingleton<CompareRule205Service, CompareRule205ServiceImp>();
@@ -65,6 +68,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainBackgroundRule46Service>();
         services.AddSingleton<MainBackgroundRule47Service>();
         services.AddSingleton<MainBackgroundRule53Service>();
+        services.AddSingleton<MainBackgroundRule55Service>();
         services.AddSingleton<MainBackgroundRule204Service>();
         services.AddSingleton<MainBackgroundRule205Service>();
         services.AddSingleton<MainBackgroundRule206Service>();
