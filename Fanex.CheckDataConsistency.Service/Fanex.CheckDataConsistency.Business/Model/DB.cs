@@ -29,5 +29,6 @@ public static class DB
     public static List<string> DB05X06X = ["DB052", "DB053", "DB061", "DB062"];
     public static List<string> MainDB { get; } = ["DBCUST"];
     public static List<string> RepDB { get; } = ["DBTP", "DB061", "DB062"];
-    public static List<string> AllDB { get; } = ["DBCUST", "DBTP", "DB061", "DB062"];
+
+    public static List<string> DB05X = ["DB05", "DB05BK1"];
 }

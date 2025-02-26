@@ -1,0 +1,68 @@
+﻿@{
+    var data = Model.Item1;
+    int rowIndex = 0;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:1000px;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var messageModel in data)
+            {
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                    <td style="text-align:center;vertical-align:top">Failure</td>
+                    <td style="text-align:center;vertical-align:top">High</td>
+                    <td style="text-align:center;vertical-align:top">@messageModel.Rule</td>
+                    <td style="text-align:left;vertical-align:top">
+                        <table border="1"
+                               id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                            <tr>
+                                <td style="text-align:center; width:30px">#</td>
+                                <td style="text-align:center; width:50px">DB</td>
+                                <td style="text-align:center; width:50px">SP</td>
+                                <td style="text-align:center; width:200px">SampleData</td>
+                                <td style="text-align:center">Message</td>
+                            </tr>
+                            @foreach (var row in messageModel.Data)
+                            {                                
+                                rowIndex++;
+                                var arr = row.Key.Split("|");
+                                var db = arr[0];
+                                var sampleData = arr[1];
+                                var sp = arr[2];
+                                <tr>
+                                    <td style="text-align:center">@rowIndex </td>
+                                    <td>@db </td>
+                                    <td>@sp </td>
+                                    <td>@sampleData</td>
+                                    <td>@row.Value</td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Remove="App_Data\DB052_DBAGE.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DB053_DBAGE.bodb02.wsv_nap.xml" />
+    <None Remove="App_Data\DB05BK1_DBSIG.bodb02.wsv_nap.xml" />
+    <None Remove="App_Data\DB05_DBSIG.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DB061_DBACC.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DB062_DBACC.bodb02.wsv_nap.xml" />
     <None Remove="App_Data\DBACC.bodb02.wsv_nap.xml" />
@@ -29,6 +31,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\DB02_DBPRO.bodb02.wsv_nap.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\DB05BK1_DBSIG.bodb02.wsv_nap.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\DB05_DBSIG.bodb02.wsv_nap.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\DBDW2_DBWH.bodb02.wsv_nap.xml">
@@ -165,6 +173,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Templates\EmailTemplateRule55.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule59.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Templates\EmailTemplateRule61.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

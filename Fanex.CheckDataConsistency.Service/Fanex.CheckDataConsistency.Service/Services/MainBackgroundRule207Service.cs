@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fanex.CheckDataConsistency.Service.Services;
 
-public class MainBackgroundRule207Service(MainRule207Service rule207Service, Log log, IMaintenanceService um) : BackgroundService
+public class MainBackgroundRule207Service(MainRule207Service rule207Service, IMaintenanceService um) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

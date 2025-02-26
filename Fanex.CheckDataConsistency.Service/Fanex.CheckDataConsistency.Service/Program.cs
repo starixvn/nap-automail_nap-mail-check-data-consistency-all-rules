@@ -28,6 +28,7 @@ if (AppConfigService.Config.IsUpdateData)
 services.AddHostedService<MainBackgroundRule53Service>();
 services.AddHostedService<MainBackgroundRule46Service>();
 services.AddHostedService<MainBackgroundRule47Service>();
+services.AddHostedService<MainBackgroundRule61Service>();
 services.AddHostedService<MainBackgroundRule204Service>();
 services.AddHostedService<MainBackgroundRule205Service>();
 services.AddHostedService<MainBackgroundRule206Service>();

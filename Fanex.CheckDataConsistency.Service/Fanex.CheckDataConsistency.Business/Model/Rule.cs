@@ -12,6 +12,7 @@ public static class Rule
     public const string Rule47 = "Rule47";
     public const string Rule51 = "Rule51";
     public const string Rule52 = "Rule52";
+    public const string Rule61 = "Rule61";
     public const int TOP100 = 100;
     public const int TOP1 = 1;
 }

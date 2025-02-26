@@ -28,6 +28,12 @@ public class ConfigSettingModel
 
     public int MailIDRule55 { get; set; }
 
+    public int MailIDRule61 { get; set; }
+
+    public int CheckingTime { get; set; }
+
+    public bool IsTest { get; set; }
+
     public int SleepIntervalInSecond = 5;
 
     public bool IsUpdateData { get; set; }

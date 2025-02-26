@@ -1,0 +1,45 @@
+﻿
+@{
+    var transids = Model.Item1;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:200px;">SP</td>
+                <td style="text-align:center; width:400px">Message</td>
+                <td style="text-align:center;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                    <td style="text-align:center;vertical-align:top">Failure</td>
+                    <td style="text-align:center;vertical-align:top">High</td>
+                    <td style="text-align:center;vertical-align:top">#59</td>
+                    <td style="text-align:left;vertical-align:top">DBA_Consistency_WinlostdateChecking</td>
+                <td style="text-align:left;vertical-align:top">Detect tickets with wrong winlostdate movement.</td>
+                    <td style="text-align: left; vertical-align: top">
+                        StatementMovementHistory.TransId IN(@transids)
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

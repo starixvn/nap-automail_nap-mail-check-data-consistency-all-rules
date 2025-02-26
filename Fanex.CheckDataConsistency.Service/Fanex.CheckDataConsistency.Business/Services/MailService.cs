@@ -35,6 +35,10 @@ public interface MailService
     Mail CreateMailRule200201202203(List<SettingDiffDto> data);
 
     Mail CreateMailRule55(MessageRule55Model messageModels);
+
+    Mail CreateMailRule59(List<string> data);
+
+    Mail CreateMailRule61(List<MessageRule61Model> messageModels);
 }
 
 public class MailServiceImp : MailService
@@ -406,6 +410,64 @@ public class MailServiceImp : MailService
         });
 
         var tuple = new Tuple<MessageRule55Model>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule59(List<string> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss} - Detect tickets with wrong winlostdate movement.",
+            Body = LoadBodyRule59(data)
+        };
+    }
+
+    private static string LoadBodyRule59(IEnumerable<string> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule59.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var transId = string.Join(", ", data);
+        var tuple = new Tuple<string>(transId);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule61(List<MessageRule61Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule61(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule61
+        };
+    }
+
+    private static string LoadBodyRule61(List<MessageRule61Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule61.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule61Model>>(messageModels);
         return compiledTemplate.Run(tuple);
     }
 }
