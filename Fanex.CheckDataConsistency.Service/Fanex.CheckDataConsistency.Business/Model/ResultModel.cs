@@ -5,9 +5,9 @@ namespace Fanex.CheckDataConsistency.Business.Model;
 
 public class ResultModel
 {
-    public Dictionary<string, CustInfoTable1Model> DictResult { get; set; }
+    public Dictionary<string, CustInfoTable1Model> DictResult { get; set; } = new();
 
-    public Dictionary<string, CustomerModel> DictResultCustomer { get; set; }
+    public Dictionary<string, CustomerModel> DictResultCustomer { get; set; } = new();
 
     public string SMAListJson { get; set; }
 

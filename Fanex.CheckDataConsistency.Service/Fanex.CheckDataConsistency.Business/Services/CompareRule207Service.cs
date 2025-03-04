@@ -37,7 +37,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
 
         resultModel.RulesList.Add("207 - Check sum/count of new records of CustInfo table between DBCust and all Repl servers that apply in-house");
         resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
-        resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02,DBPRO-bodb02");
+        resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
         resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking_DBTP - DBTP/bodb02");
     }
 
@@ -127,7 +127,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             DB.DBDW2,
             DB.DB04ADMIN1,
             DB.DB04ADMIN2,
-            DB.DB02
+          //  DB.DB02
         };
 
         dbReplList.ForEach(dbRepl =>
