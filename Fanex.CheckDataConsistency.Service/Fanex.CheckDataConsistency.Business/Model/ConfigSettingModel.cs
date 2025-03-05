@@ -34,7 +34,7 @@ public class ConfigSettingModel
 
     public bool IsTest { get; set; }
 
-    public int SleepIntervalInSecond = 5;
+    public int SleepIntervalInSecond = 15;
 
     public bool IsUpdateData { get; set; }
 
