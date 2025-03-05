@@ -6,7 +6,11 @@ public class ConsistencyCheckModel
 
     public int SiteDBGroupID { get; set; }
 
-    public int Recommend { get; set; }
+    public long Recommend { get; set; }
+
+    public long Mrecommend { get; set; }
+
+    public long Srecommend { get; set; }
 
     public string Status { get; set; }
 

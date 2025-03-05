@@ -33,5 +33,11 @@
 		<Setting Key="Rule52_DBSite01_SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" SpName="SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
 		<Setting Key="Rule52_DBSite02_SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" SpName="SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
 		<Setting Key="Rule52_DBSite03_SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" SpName="SiteDB_DBA_Consistency_AutoTransfer_Check_TotalSuperVSTicket" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite01_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite02_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite03_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite01_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite01.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite02_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite02.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="Rule61_DBSite03_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBSite03.bodb02.wsv_nap" Timeout="0" />
 	</Function>
 </Functions>

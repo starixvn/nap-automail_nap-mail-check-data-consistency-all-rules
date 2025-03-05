@@ -1,0 +1,139 @@
+﻿@{
+    var data = Model.Item1;
+    int count = 1;
+    string label = "";
+    long value = 0;
+
+} 
+
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+    id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                <td style="text-align:center;vertical-align:top">Failure</td>
+                <td style="text-align:center;vertical-align:top">High</td>
+                <td style="text-align: left; vertical-align: top">
+                    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                        <tr style="height: 25px">
+                            <td style="text-align:center;vertical-align:top">Rule</td>
+                            <td style="text-align:center;vertical-align:top">SPName</td>
+                            <td style="text-align:center;vertical-align:top">Start Time</td>
+                            <td style="text-align:center;vertical-align:top">End Time</td>
+                            <td style="text-align:center;vertical-align:top">Information</td>
+                        </tr>
+                        @foreach (var config in data)
+                        {
+                            <tr style="height: 25px">
+                                <td style="text-align:center;vertical-align:top">@config.Config.RuleNumber</td>
+                                <td style="text-align:center;vertical-align:top">@config.Config.SpName</td>
+                                <td style="text-align:center;vertical-align:top">@config.TimeModel.StartTime.ToString("yyyy-MM-dd hh:mm:ss.FFF tt")</td>
+                                <td style="text-align:center;vertical-align:top">@config.TimeModel.EndTime.ToString("yyyy-MM-dd hh:mm:ss.FFF tt")</td>
+                                <td style="text-align:center;vertical-align:top">
+                                        <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                            <tbody>
+                                                @foreach (var item in config.Data)
+                                                {
+                                                    <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                        <td rowspan="2" style="text-align:center;width:20px">@count</td>
+                                                        <td style="text-align:center;width:100px">@item.DBMain</td>
+                                                        <td style="text-align:center;vertical-align:top;">
+                                                            <table border="1" id="display" style="border-style:Solid;border-collapse:collapse;font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                                                <thead>
+                                                                <tr style="height: 25px">
+                                                                    <td style="text-align:center; width:200px;">TableName</td>
+                                                                    <td style="text-align:center; width:100px;">Site</td>
+                                                                    <td style="text-align:center; width:100px">
+                                                                        @{
+                                                                            label = config.Config.RuleNumber % 2 == 0 ? "RowCount" : "CHECKSUM";
+                                                                        }
+                                                                        <span>@label</span>
+                                                                    </td>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                @foreach (var item2 in item.MainDiffData)
+                                                                {
+                                                                    <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                                        <td style="text-align:center;vertical-align:top">@item2.TableName</td>
+                                                                        <td style="text-align:center;vertical-align:top">@item2.Site</td>
+                                                                        <td style="text-align:center;vertical-align:top">
+                                                                            @{
+                                                                                value = config.Config.RuleNumber % 2 == 0 ? (long)item2.RowCount : (long)item2.CHECKSUM_Value;
+                                                                            }
+                                                                            <span>@value.ToString("N0")</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                        <td style="text-align:center; width:100px">@item.DBRep</td>
+                                                        <td style="text-align:center;vertical-align:top;">
+                                                            <table border="1" id="display" style="border-style:Solid;border-collapse:collapse;font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                                                                <thead>
+                                                                <tr style="height: 25px">
+                                                                    <td style="text-align:center; width:200px;">TableName</td>
+                                                                    <td style="text-align:center; width:100px;">Site</td>
+                                                                    <td style="text-align:center; width:100px">
+                                                                        @{
+                                                                            label = config.Config.RuleNumber % 2 == 0 ? "RowCount" : "CHECKSUM";
+                                                                        }
+                                                                        <span>@label</span>
+                                                                    </td>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                @foreach (var item2 in item.RepDiffData)
+                                                                {
+                                                                    <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                                        <td style="text-align:center;vertical-align:top">@item2.TableName</td>
+                                                                        <td style="text-align:center;vertical-align:top">@item2.Site</td>
+                                                                        <td style="text-align:center;vertical-align:top">
+                                                                            @{
+                                                                                value = config.Config.RuleNumber % 2 == 0 ? (long)item2.RowCount : (long)item2.CHECKSUM_Value;
+                                                                            }
+                                                                            <span>@value.ToString("N0")</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                    count++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div> 
+</div>

@@ -21,6 +21,10 @@ public interface RefineDataService
     List<MessageRule51Model> SelectDifferentDataRule51();
 
     List<MessageRule52Model> SelectDifferentDataRule52();
+
+    MessageRule55Model SelectDataRule55();
+
+    List<MessageRule61Model> SelectDifferentDataRule61();
 }
 
 public class RefineDataServiceImp(
@@ -30,7 +34,9 @@ public class RefineDataServiceImp(
     DataConsistencyRule46Service dataServiceRule46,
     DataConsistencyRule47Service dataServiceRule47,
     DataConsistencyRule51Service dataServiceRule51,
-    DataConsistencyRule52Service dataServiceRule52)
+    DataConsistencyRule52Service dataServiceRule52,
+    DataConsistencyRule55Service dataServiceRule55,
+    DataConsistencyRule61Service dataServiceRule61)
     : RefineDataService
 {
     public List<MessageRule4849Model> SelectDifferentDataRule4849(DateTime currentTime)
@@ -91,5 +97,19 @@ public class RefineDataServiceImp(
         var resultRule52 = dataServiceRule52.QueryData();
 
         return resultRule52;
+    }
+
+    public MessageRule55Model SelectDataRule55()
+    {
+        var resultRule55 = dataServiceRule55.QueryData();
+
+        return resultRule55;
+    }
+
+    public List<MessageRule61Model> SelectDifferentDataRule61()
+    {
+        var resultRule61 = dataServiceRule61.QueryData();
+
+        return resultRule61;
     }
 }

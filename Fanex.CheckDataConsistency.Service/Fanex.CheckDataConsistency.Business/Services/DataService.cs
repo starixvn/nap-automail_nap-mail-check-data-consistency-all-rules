@@ -59,6 +59,20 @@ public interface DataService
     List<ConsistencyRule51Model> QueryRule51(Result result);
 
     Dictionary<string, List<ConsistencyRule52Model>> QueryRule52();
+
+    List<DataConsistencyConfigModel> GetConfigData();
+
+    Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> QueryCustInfoMiniCheckingFromDBGLOB(string tableName, string spName, string vvalue, string smaListJson, byte[] custlistJson);
+
+    Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> QueryCustSubMiniCheckingFromDBGLOB(string tableName, string spName, string vvalue, string custMiniList, byte[] custlistJson);
+
+    List<CustInfoTable1Model> QueryCustInfoFromDBTP(string tableName, string spName, byte[] custlistJson);
+
+    void UpdateConfig(DataConsistencyConfigUpdateCommand command);
+
+    CustomerModel QueryCustomerFromDBTP(string tableName, string spName, string vvalue);
+
+    CustomerModel QueryCustomerFromDBGLOB(string tableName, string spName, string vvalue, int maxCustNew);
 }
 
 public class DataServiceImp(IDynamicRepository repository, Log log) : DataService
@@ -94,7 +108,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             {
                 var key = $"{Rule.Rule48}_{siteDb.LinkedServerName}";
                 var spName = $"{key}_SiteDB_DBA_Consistency_CheckTicketCount";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var timeStart = DateTime.Now;
                 var data = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var timeEnd = DateTime.Now;
@@ -103,7 +117,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 dict.Add($"{key}_{count}", data);
                 count++;
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             });
         }
 
@@ -122,8 +136,19 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         var distinctRetry = reTryInfos.GroupBy(g => new { g.TableName });
         foreach (var item in distinctRetry)
         {
-            var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
-            retryInfoFinal.Add(new RetryInfo { TableName = item.Key.TableName, RecommendList = recommends });
+            var smaList = new List<SMAModel>();
+            item.ToList().ForEach(row =>
+            {
+                smaList.AddRange(row.SMAList);
+            });
+            var shortSMAList = new List<SMAModel>();
+            smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
+            {
+                shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+            });
+
+            recommendList = item.Key.TableName == null ? null : JsonConvert.SerializeObject(shortSMAList, Formatting.Indented);
+            retryInfoFinal.Add(new RetryInfo { TableName = item.Key!.TableName, SMAList = shortSMAList, RecommendList = recommendList });
         }
 
         var dbs = DB.DB05X06X;
@@ -135,14 +160,14 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 recommendList = reTryInfo.RecommendList;
                 tableName = reTryInfo.TableName;
                 var spName = $"{db}_DBA_Consistency_CheckTicketCount";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var timeStart = DateTime.Now;
                 var dataDbX = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var timeEnd = DateTime.Now;
                 var duration = timeEnd - timeStart;
                 data.AddRange(dataDbX);
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration:{duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             }
 
             dict.Add($"{db}_{count}", data);
@@ -163,12 +188,12 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         {
             var tableName = retryInfo.TableName;
             var recommendList = retryInfo.RecommendList;
-            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
             var startTime = DateTime.Now;
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
             var duration = endTime - startTime;
-            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
+            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
             data1.AddRange(result.Item1.ToList());
             data2.AddRange(result.Item2.ToList());
         }
@@ -189,12 +214,12 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             var recommendList = retryInfo.RecommendList;
             var tableName = retryInfo.TableName;
 
-            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+            var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
             var startTime = DateTime.Now;
             var result = repository.FetchMultiple<ConsistencyCheckModel, Rule4849FromToModel>(criteria);
             var endTime = DateTime.Now;
             var duration = endTime - startTime;
-            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
+            log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{result.FirstResultSet.ToList().Count}]");
 
             result.FirstResultSet.ToList().ForEach(row =>
             {
@@ -230,7 +255,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
             {
                 var key = $"{Rule.Rule49}_{siteDb.LinkedServerName}";
                 var spName = $"{key}_SiteDB_DBA_Consistency_CheckSumTicket";
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var data = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 data.ForEach(row =>
                 {
@@ -248,8 +273,8 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
 
     public Dictionary<string, List<ConsistencyCheckModel>> Rule49SelectDB05XDB06XConsistencyCheckSumTicket(DateTime currentTime)
     {
-        string recommendList;
         string tableName;
+        string recommendList;
 
         var dict = new Dictionary<string, List<ConsistencyCheckModel>>();
         var retryInfos = AppConfigService.RetryInfos[Rule.Rule49];
@@ -259,8 +284,18 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         var distinctRetry = retryInfos.GroupBy(g => new { g.TableName });
         foreach (var item in distinctRetry)
         {
-            var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
-            retryInfoFinal.Add(new RetryInfo { TableName = item.Key.TableName, RecommendList = recommends });
+            var smaList = new List<SMAModel>();
+            item.ToList().ForEach(row =>
+            {
+                smaList.AddRange(row.SMAList);
+            });
+            var shortSMAList = new List<SMAModel>();
+            smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
+            {
+                shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+            });
+            recommendList = item.Key.TableName == null ? null : JsonConvert.SerializeObject(shortSMAList, Formatting.Indented);
+            retryInfoFinal.Add(new RetryInfo { TableName = item.Key!.TableName, SMAList = shortSMAList, RecommendList = recommendList });
         }
 
         var dbs = DB.DB05X06X;
@@ -273,13 +308,13 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
                 recommendList = retryInfo.RecommendList;
                 var spName = $"{db}_DBA_Consistency_CheckSumTicket";
                 var startTime = DateTime.Now;
-                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, RecommendList = recommendList, TableName = tableName };
+                var criteria = new Rule4849QueryDataCriteria(spName) { CurrentTime = currentTime, SMAListJson = recommendList, TableName = tableName };
                 var dataDbX = repository.Fetch<ConsistencyCheckModel>(criteria).ToList();
                 var endTime = DateTime.Now;
                 var duration = endTime - startTime;
                 data.AddRange(dataDbX);
 
-                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCount}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
+                log.Log($"the Rule 48-49: Retry [{AppConfigService.RetryCountRule4849}] {spName} Duration: {duration:c} {JsonConvert.SerializeObject(criteria, Formatting.Indented)} - [{data.Count}]");
             }
 
             dict.Add($"{db}_{count}", data);
@@ -730,5 +765,88 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
         });
 
         return dict;
+    }
+
+    public List<DataConsistencyConfigModel> GetConfigData()
+    {
+        var criteria = new DataConsistencyConfigSelectCriteria();
+        return repository.Fetch<DataConsistencyConfigModel>(criteria).Where(s => s.GroupId == 2).ToList();
+    }
+
+    public Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> QueryCustInfoMiniCheckingFromDBGLOB(string tableName, string spName, string vvalue, string smaListJson, byte[] custlistJson)
+    {
+        var criteria = new CustInfoMiniCheckingCriteria(DB.DBGLOB, spName)
+        {
+            TableName = tableName,
+            VValue = vvalue,
+            SMAListJson = smaListJson,
+            CustListJson = custlistJson
+        };
+        var result = repository.FetchMultiple<CustInfoTable1Model, CustInfoTable2Model>(criteria);
+
+        var table1 = result.FirstResultSet.ToList();
+        var table2 = result.Item2.ToList().FirstOrDefault();
+
+        return new Tuple<List<CustInfoTable1Model>, CustInfoTable2Model>(table1, table2);
+    }
+
+    public Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> QueryCustSubMiniCheckingFromDBGLOB(string tableName, string spName, string vvalue, string custMiniList, byte[] custlistJson)
+    {
+        var criteria = new CustSubMiniCheckingCriteria(DB.DBGLOB, spName)
+        {
+            TableName = tableName,
+            VValue = vvalue,
+            CustMiniList = custMiniList,
+            CustListJson = custlistJson
+        };
+        var result = repository.FetchMultiple<CustInfoTable1Model, CustInfoTable2Model>(criteria);
+
+        var table1 = result.FirstResultSet.ToList();
+        var table2 = result.Item2.ToList().FirstOrDefault();
+
+        return new Tuple<List<CustInfoTable1Model>, CustInfoTable2Model>(table1, table2);
+    }
+
+    public List<CustInfoTable1Model> QueryCustInfoFromDBTP(string tableName, string spName, byte[] custlistJson)
+    {
+        var criteria = new CustInfoMiniCheckingCriteria(DB.DBTP, spName)
+        {
+            TableName = tableName,
+            CustListJson = custlistJson
+        };
+
+        var result = repository.Fetch<CustInfoTable1Model>(criteria).ToList();
+        return result;
+    }
+
+    public void UpdateConfig(DataConsistencyConfigUpdateCommand command)
+    {
+        if (AppConfigService.Config.IsUpdateData)
+        {
+            repository.Execute(command);
+        }
+    }
+
+    public CustomerModel QueryCustomerFromDBTP(string tableName, string spName, string vvalue)
+    {
+        var criteria = new CustomerCheckingCriteria(DB.DBTP, spName)
+        {
+            TableName = tableName,
+            VValue = vvalue
+        };
+
+        return repository.Get<CustomerModel>(criteria);
+    }
+
+    public CustomerModel QueryCustomerFromDBGLOB(string tableName, string spName, string vvalue, int maxCustNew)
+    {
+        var criteria = new CustomerCheckingCriteria(DB.DBGLOB, spName)
+        {
+            TableName = tableName,
+            VValue = vvalue,
+            MaxCust_New = maxCustNew
+        };
+
+        return repository.Get<CustomerModel>(criteria);
     }
 }

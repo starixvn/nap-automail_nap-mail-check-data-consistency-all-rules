@@ -30,7 +30,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var jsonDataSiteDBs = JsonConvert.SerializeObject(dataSiteDBs, Formatting.Indented);
             var jsonDataConsistency = JsonConvert.SerializeObject(dataConsistency, Formatting.Indented);
             var jsonDataDb05X06x = JsonConvert.SerializeObject(dataDb05X06x, Formatting.Indented);
-            var date = $"{DateTime.Today:yyyyMMdd}-Retry-{AppConfigService.RetryCount}";
+            var date = $"{DateTime.Today:yyyyMMdd}-Retry-{AppConfigService.RetryCountRule4849}";
             var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
             Directory.CreateDirectory(path);
             File.WriteAllText($"{path}/{Rule.Rule49}-{date}-DataSiteDBs.json", jsonDataSiteDBs);
@@ -67,19 +67,28 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var recommendList = new List<int>();
             foreach (var item in distinctRetry)
             {
-                var recommends = string.Join(",", item.Select(s => s.RecommendList).Distinct());
-                recommendList.Add(item.Select(s => s.RecommendList).Distinct().Count());
-                retryInfoFinal.Add(new RetryInfo { Rule = Rule.Rule49, SiteDB = item.Key.SiteDB, TableName = item.Key.TableName, RecommendList = recommends });
+                var smaList = new List<SMAModel>();
+                item.ToList().ForEach(row =>
+                {
+                    smaList.AddRange(row.SMAList);
+                });
+                var shortSMAList = new List<SMAModel>();
+                smaList.GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend }).ToList().ForEach(sma =>
+                {
+                    shortSMAList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+                });
+
+                retryInfoFinal.Add(new RetryInfo { Rule = Rule.Rule49, SiteDB = item.Key.SiteDB, TableName = item.Key.TableName, SMAList = shortSMAList, RecommendList = JsonConvert.SerializeObject(shortSMAList, Formatting.Indented) });
             }
 
             var countRecommendList = recommendList.Count > 0 ? recommendList.Max() : 0;
             var isNeedResetRule49 = countRecommendList > 100;
 
-            if (AppConfigService.RetryCount > 0 && retryInfoFinal.Count == 0)
+            if (AppConfigService.RetryCountRule4849 > 0 && retryInfoFinal.Count == 0)
             {
                 retryInfoFinal.Add(new RetryInfo()
                 {
-                    RecommendList = "1",
+                    RecommendList = "[]",
                     Rule = Rule.Rule49,
                     TableName = "bettrans",
                     SiteDB = "DBSite01"
@@ -89,7 +98,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
             if (isNeedResetRule49)
             {
                 retryInfoFinal.Clear();
-                retryInfoFinal.Add(new RetryInfo { Rule = Rule.Rule49, SiteDB = string.Empty, TableName = string.Empty, RecommendList = string.Empty });
+                retryInfoFinal.Add(new RetryInfo { Rule = Rule.Rule49, SiteDB = string.Empty, TableName = string.Empty, RecommendList = "[]" });
             }
 
             if (AppConfigService.RetryInfos.ContainsKey(Rule.Rule49))
@@ -101,7 +110,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                 AppConfigService.RetryInfos.Add(Rule.Rule49, retryInfoFinal);
             }
             var jSonRetryInfo = JsonConvert.SerializeObject(AppConfigService.RetryInfos, Formatting.Indented);
-            log.Log($"Retrying the Rule 48-49: [Rule49] {AppConfigService.RetryCount} times at {DateTime.Now}, {Environment.NewLine} {jSonRetryInfo}");
+            log.Log($"Retrying the Rule 48-49: [Rule49] {AppConfigService.RetryCountRule4849} times at {DateTime.Now}, {Environment.NewLine} {jSonRetryInfo}");
 
             var notExistsModel = new MessageRule4849Model
             {
@@ -146,13 +155,21 @@ namespace Fanex.CheckDataConsistency.Business.Services
             dataDiffBySiteDB.GroupBy(g => new { g.Value.TableName }).ToList()
                 .ForEach(table =>
                 {
-                    var recommends = table.Select(s => s.Value.Recommend).Distinct();
+                    var smaList = new List<SMAModel>();
+                    table.Select(s => new SMAModel { Recommend = s.Value.Recommend, Mrecommend = s.Value.Mrecommend, Srecommend = s.Value.Srecommend })
+                        .GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend })
+                        .ToList()
+                        .ForEach(sma =>
+                        {
+                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+                        });
                     retryInfo.Add(new RetryInfo
                     {
                         Rule = Rule.Rule49,
                         SiteDB = siteDBInternal,
                         TableName = table.Key.TableName,
-                        RecommendList = string.Join(",", recommends)
+                        SMAList = smaList,
+                        RecommendList = JsonConvert.SerializeObject(smaList, Formatting.Indented)
                     });
                 });
 
@@ -160,13 +177,21 @@ namespace Fanex.CheckDataConsistency.Business.Services
             dataNotExistsBySiteDB.GroupBy(g => new { g.Value.TableName }).ToList()
                 .ForEach(table =>
                 {
-                    var recommends = table.Select(s => s.Value.Recommend).Distinct();
+                    var smaList = new List<SMAModel>();
+                    table.Select(s => new SMAModel { Recommend = s.Value.Recommend, Mrecommend = s.Value.Mrecommend, Srecommend = s.Value.Srecommend })
+                        .GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend })
+                        .ToList()
+                        .ForEach(sma =>
+                        {
+                            smaList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
+                        });
                     retryInfo.Add(new RetryInfo
                     {
                         Rule = Rule.Rule49,
                         SiteDB = siteDBInternal,
                         TableName = table.Key.TableName,
-                        RecommendList = string.Join(",", recommends)
+                        SMAList = smaList,
+                        RecommendList = JsonConvert.SerializeObject(smaList, Formatting.Indented)
                     });
                 });
         }
@@ -183,7 +208,9 @@ namespace Fanex.CheckDataConsistency.Business.Services
             {
                 var consisRow = dataConsistency.Item1.FirstOrDefault(s => s.TableName == siteDBRow.TableName
                 && s.SiteDBGroupID == siteDBRow.SiteDBGroupID
-                && s.Recommend == siteDBRow.Recommend);
+                && s.Recommend == siteDBRow.Recommend
+                && s.Mrecommend == siteDBRow.Mrecommend
+                && s.Srecommend == siteDBRow.Srecommend);
 
                 if (consisRow == null)
                 {
@@ -206,7 +233,9 @@ namespace Fanex.CheckDataConsistency.Business.Services
             {
                 var siteDBRow = dataSiteDB.Value.FirstOrDefault(s => s.TableName == consisRow.TableName
                 && s.SiteDBGroupID == consisRow.SiteDBGroupID
-                && s.Recommend == consisRow.Recommend);
+                && s.Recommend == consisRow.Recommend
+                && s.Mrecommend == consisRow.Mrecommend
+                && s.Srecommend == consisRow.Srecommend);
 
                 if (siteDBRow != null && consisRow.TotalCheckSumAgg != siteDBRow.TotalCheckSumAgg)
                 {

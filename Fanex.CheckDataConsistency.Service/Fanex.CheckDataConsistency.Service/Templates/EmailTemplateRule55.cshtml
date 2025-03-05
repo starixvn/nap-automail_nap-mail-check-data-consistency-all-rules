@@ -1,0 +1,97 @@
+﻿@{
+    var data = Model.Item1;
+    var index = 1;
+    var tableId = 1;
+}
+<div>
+    <div>
+        Dear All,<br /><br />
+
+        Please be notified the result of data checking schedule as below:<br />
+    </div>
+    <br />
+    <table border="1"
+           id="display" style="border-style:Solid;border-collapse:collapse;
+            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+        <thead>
+            <tr style="height: 25px;background-color:#3C5EA5; color: #FFFFFF; font-weight: bold;">
+                <td style="text-align:center; width:70px;">Result</td>
+                <td style="text-align:center; width:70px;">Severity</td>
+                <td style="text-align:center; width:70px;">Rule</td>
+                <td style="text-align:center; width:400px;">SP</td>
+                <td style="text-align:center; width:310px;">Message</td>
+                <td style="text-align:center; width:100px;">DB</td>
+                <td style="text-align:center; width:530px;">Data</td>
+            </tr>
+        </thead>
+        <tbody>
+                <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif; vertical-align:top">
+                <td style="text-align:center;vertical-align:top">Failure</td>
+                <td style="text-align:center;vertical-align:top">High</td>
+                <td style="text-align:center;vertical-align:top">@data.Rule</td>
+                <td style="text-align:left;vertical-align:top">@data.SPName</td>
+                <td style="text-align:left;vertical-align:top">
+                    
+                    @data.Message
+                    
+                    <br />
+                    <br />
+
+                    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                        <tr>
+                            <td style="width:10px;text-align:center">#</td>
+                            <td style="width:100px;text-align:center">TableName</td>
+                            <td style="width:100px;text-align:center">FromSequenceID</td>
+                            <td style="width:100px;text-align:center">ToSequenceID</td>
+                        </tr>
+                        
+                        @foreach(var row in data.SeqIds)
+                        {
+                            <tr>
+                                <td style="text-align:center">@tableId</td>
+                                <td style="text-align:center">@row.TableName</td>
+                                <td style="text-align:right">@row.FromSequenceID</td>
+                                <td style="text-align:right">@row.ToSequenceID</td>                                
+                            </tr>
+
+                            tableId++;
+                        }
+                    </table>
+                </td>
+                <td style="text-align:center;vertical-align:top">@data.DB</td>
+                <td style="text-align:left;vertical-align:top">
+                    <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
+                            <tr>
+                                <td style="width: 30px; text-align: center">#</td>
+                                <td style="width: 100px; text-align: center">TableName</td>
+                                <td style="width: 100px; text-align: center">TransID</td>
+                                <td style="width: 100px; text-align: center">CustID</td>
+                                <td style="width: 100px; text-align: center">SourceSiteDBGroupID</td>
+                                <td style="width: 100px; text-align: center">CustomerSiteDBGroupID</td>
+                            </tr>
+                            @foreach (var row in data.Data)
+                            {                                
+                                <tr>
+                                    <td style="text-align:center">@index </td>
+                                    <td style="text-align:center">@row.TableName</td>
+                                    <td style="text-align:right">@row.TransID</td>
+                                    <td style="text-align:right">@row.CustID</td>
+                                    <td style="text-align:right">@row.SourceSiteDBGroupID</td>
+                                    <td style="text-align:right">@row.CustomerSiteDBGroupID</td>                                    
+                                </tr>
+                            
+                                index++;
+                            }
+                        </table>
+                    </td>
+                </tr>
+           
+        </tbody>
+    </table>
+    <br />
+    <div>
+        Thanks and best regards, <br /> <br />
+
+        This is an auto-mail from Data Consistency Checking service. Please do not reply.
+    </div>
+</div>

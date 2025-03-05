@@ -23,6 +23,22 @@ public interface MailService
     Mail CreateMailRule51(List<MessageRule51Model> messageModels);
 
     Mail CreateMailRule52(List<MessageRule52Model> messageModels);
+
+    Mail CreateMailRule204(List<ResultModel> data);
+
+    Mail CreateMailRule205(List<ResultModel> data);
+
+    Mail CreateMailRule206(List<ResultModel> data);
+
+    Mail CreateMailRule207(List<ResultModel> data);
+
+    Mail CreateMailRule200201202203(List<SettingDiffDto> data);
+
+    Mail CreateMailRule55(MessageRule55Model messageModels);
+
+    Mail CreateMailRule59(List<string> data);
+
+    Mail CreateMailRule61(List<MessageRule61Model> messageModels);
 }
 
 public class MailServiceImp : MailService
@@ -225,6 +241,233 @@ public class MailServiceImp : MailService
         });
 
         var tuple = new Tuple<List<MessageRule52Model>>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule204(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule204(data)
+        };
+    }
+
+    private static string LoadBodyRule204(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule204.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule205(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule205(data)
+        };
+    }
+
+    private static string LoadBodyRule205(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule205.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule206(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule206(data)
+        };
+    }
+
+    private static string LoadBodyRule206(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule206.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule207(List<ResultModel> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule207(data)
+        };
+    }
+
+    private static string LoadBodyRule207(List<ResultModel> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule207.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<ResultModel>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule200201202203(List<SettingDiffDto> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Customer Setting Checking service",
+            Subject = $"Data Consistency Customer Setting Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBody(data)
+        };
+    }
+
+    private static string LoadBody(List<SettingDiffDto> data)
+    {
+        const string templatePath = "Templates/EmailTemplate200201202203.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<SettingDiffDto>>(data);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule55(MessageRule55Model messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule55(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule55
+        };
+    }
+
+    private static string LoadBodyRule55(MessageRule55Model messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule55.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<MessageRule55Model>(messageModels);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule59(List<string> data)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss} - Detect tickets with wrong winlostdate movement.",
+            Body = LoadBodyRule59(data)
+        };
+    }
+
+    private static string LoadBodyRule59(IEnumerable<string> data)
+    {
+        const string templatePath = "Templates/EmailTemplateRule59.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var transId = string.Join(", ", data);
+        var tuple = new Tuple<string>(transId);
+        return compiledTemplate.Run(tuple);
+    }
+
+    public Mail CreateMailRule61(List<MessageRule61Model> messageModels)
+    {
+        return new Mail
+        {
+            Title = "Data Consistency Checking service",
+            Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            Body = LoadBodyRule61(messageModels),
+            MailingListId = AppConfigService.Config.MailIDRule61
+        };
+    }
+
+    private static string LoadBodyRule61(List<MessageRule61Model> messageModels)
+    {
+        const string templatePath = "Templates/EmailTemplateRule61.cshtml";
+        var hashCode = templatePath.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
+        {
+            var template = File.ReadAllText(templatePath);
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template, builder =>
+            {
+                builder.AddUsing("System");
+            });
+        });
+
+        var tuple = new Tuple<List<MessageRule61Model>>(messageModels);
         return compiledTemplate.Run(tuple);
     }
 }

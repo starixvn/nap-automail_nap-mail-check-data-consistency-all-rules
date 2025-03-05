@@ -1,3 +1,4 @@
+using Fanex.CheckDataConsistency.Business.Services;
 using Fanex.CheckDataConsistency.Service;
 using Fanex.CheckDataConsistency.Service.Services;
 using Fanex.Data.SqlServer;
@@ -19,9 +20,19 @@ services.AddFanexLogSentry(configuration);
 services.AddOneBookUmForService(configuration);
 services.AddInternalService();
 
+if (AppConfigService.Config.IsUpdateData)
+{
+    services.AddHostedService<MainBackgroundRule55Service>();
+}
+
 services.AddHostedService<MainBackgroundRule53Service>();
 services.AddHostedService<MainBackgroundRule46Service>();
 services.AddHostedService<MainBackgroundRule47Service>();
+services.AddHostedService<MainBackgroundRule61Service>();
+services.AddHostedService<MainBackgroundRule204Service>();
+services.AddHostedService<MainBackgroundRule205Service>();
+services.AddHostedService<MainBackgroundRule206Service>();
+services.AddHostedService<MainBackgroundRule207Service>();
 
 var app = builder.Build();
 app.UseSwagger();

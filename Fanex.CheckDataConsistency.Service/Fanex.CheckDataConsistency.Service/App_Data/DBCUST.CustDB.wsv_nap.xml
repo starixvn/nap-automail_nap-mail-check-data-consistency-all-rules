@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Functions>
+	<Setting Key="DBCUST_DBA_Consistency_Customer_InhouseRepl_Checking" SpName="DBA_Consistency_Customer_InhouseRepl_Checking" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+	<Setting Key="DBCUST_DBA_Consistency_CustInfo_InhouseRepl_Checking" SpName="DBA_Consistency_CustInfo_InhouseRepl_Checking" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+	<Setting Key="DBCUST_DBA_Consistency_BetSetting_CheckCount" SpName="DBA_Consistency_BetSetting_CheckCount" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+	<Setting Key="DBCUST_DBA_Consistency_BetSetting_CheckSum" SpName="DBA_Consistency_BetSetting_CheckSum" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+	<Setting Key="DBCUST_DBA_Consistency_BetSetting3rd_CheckCount" SpName="DBA_Consistency_BetSetting3rd_CheckCount" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+	<Setting Key="DBCUST_DBA_Consistency_BetSetting3rd_CheckSum" SpName="DBA_Consistency_BetSetting3rd_CheckSum" DbName="DBCUST.CustDB.wsv_nap" Timeout="0" />
+</Functions>

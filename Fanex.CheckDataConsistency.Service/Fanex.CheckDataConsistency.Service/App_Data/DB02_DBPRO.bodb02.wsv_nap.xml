@@ -1,0 +1,5 @@
+﻿<Functions>
+	<Function Name="Scale Out DB">
+		<Setting Key="DB02_DBA_Consistency_CustInfo_InhouseRepl_Checking" SpName="DBA_Consistency_CustInfo_InhouseRepl_Checking" DbName="DB02_DBPRO.bodb02.wsv_nap" Timeout="0" />
+	</Function>
+</Functions>

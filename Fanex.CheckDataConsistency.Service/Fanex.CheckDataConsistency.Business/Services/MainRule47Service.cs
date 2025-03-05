@@ -22,7 +22,12 @@ public class MainRule47ServiceImp(
         var jobMessage = new JobMessage();
         try
         {
-            result = SendNotification();
+            if (!AppConfigService.IsOnProcessingRule47)
+            {
+                AppConfigService.IsOnProcessingRule47 = true;
+                result = SendNotification();
+                AppConfigService.IsOnProcessingRule47 = false;
+            }
         }
         catch (Exception e)
         {
@@ -39,6 +44,8 @@ public class MainRule47ServiceImp(
                 LogTime = DateTime.Now,
                 Message = result.Message
             };
+
+            AppConfigService.IsOnProcessingRule47 = true;
         }
 
         return jobMessage;

@@ -10,11 +10,21 @@ public static class AppConfigService
 
     public static DateTime? CurrentTime { get; set; } = null;
 
-    public static bool IsOnProcessingRule53 { get; set; }
+    public static bool IsOnProcessingRule4849 { get; set; }
 
     public static bool IsOnProcessingRule46 { get; set; }
 
     public static bool IsOnProcessingRule47 { get; set; }
+
+    public static bool IsOnProcessingRule204 { get; set; }
+
+    public static bool IsOnProcessingRule205 { get; set; }
+
+    public static bool IsOnProcessingRule206 { get; set; }
+
+    public static bool IsOnProcessingRule207 { get; set; }
+
+    public static bool IsOnProcessingRule61 { get; set; }
 
     public static Dictionary<string, List<RetryInfo>> RetryInfos { get; set; } = new()
     {
@@ -22,7 +32,11 @@ public static class AppConfigService
         { Rule.Rule49, [new RetryInfo()] }
     };
 
-    public static int RetryCount { get; set; }
+    public static int RetryCountRule4849 { get; set; }
+
+    public static int RetryCountRule200201202203 { get; set; }
+
+    public static TimeModel TimeModel { get; set; } = new();
 
     public static Dictionary<string, Rule46DTO> DataSiteDBs { get; set; }
 }

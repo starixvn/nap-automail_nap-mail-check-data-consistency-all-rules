@@ -26,6 +26,7 @@
         <tbody>
             @foreach (var messageModel in data)
             {
+                var subRowIndex = 0;
                 <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
                     <td style="text-align:center;vertical-align:top">Failure</td>
                     <td style="text-align:center;vertical-align:top">High</td>
@@ -65,67 +66,60 @@
                     <td style="text-align:left;vertical-align:top"> 
                         <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
                             <tr>
-                                <td style="text-align:center; width:30px">#</td>
-                                <td style="text-align:center; width:150px">DB</td>
-                                <td style="text-align:center">Detail Info</td>
+                                <td style="text-align:center; width:30px;font-weight: bold">#</td>
+                                <td style="text-align:center; width:150px;font-weight: bold">DB</td>
+                                <td style="width: 100px; text-align: center;font-weight: bold">TableName</td>
+                                <td style="width: 100px; text-align: center;font-weight: bold">SiteDBGroupID</td>
+                                <td style="width: 100px; text-align: center;font-weight: bold">Recommend</td>
+                                <td style="width: 100px; text-align: center;font-weight: bold">Mrecommend</td>
+                                <td style="width: 100px; text-align: center;font-weight: bold">Srecommend</td>
+                                @if (messageModel.Rule == "#48")
+                                {
+                                    <td style="width: 100px; text-align: center;font-weight: bold">Status</td>
+                                    <td style="width: 100px; text-align: center">
+                                        <span style="font-weight: bold">TicketCount</span>
+                                    </td>
+                                }
+                                else if (messageModel.Rule == "#49")
+                                {
+                                    <td style="width:200px" colspan="2">
+                                        <span style="font-weight: bold">TotalCheckSumAgg</span>
+                                    </td>
+                                }
                             </tr>
                             @foreach (var row in messageModel.Data)
                             {
-                                int index = Convert.ToInt32(row.Key.Split('-')[0]);
                                 var db = row.Key.Split('-')[1];
                                 rowIndex++;
                                 <tr>
                                     @if (rowIndex % 2 == 0)
                                     {
-                                        <td style="text-align:center" rowspan="2">@index </td>
+                                        subRowIndex++;
+                                        <td style="text-align:center" rowspan="2">@subRowIndex </td>
                                     }
                                     <td>@db </td>
-                                    <td>
-                                        <table border="1"
-                                               id="display" style="border-style:Solid;border-collapse:collapse;
-            font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
-                                            <tr>
-                                                <td style="width: 100px; text-align: center">TableName</td>
-                                                <td style="width: 100px; text-align: center">SiteDBGroupID</td>
-                                                <td style="width: 100px; text-align: center">Recommend</td>
-                                                @if (messageModel.Rule == "#48")
-                                                {
-                                                    <td style="width: 100px; text-align: center">Status</td>
-                                                    <td style="width: 100px; text-align: center">
-                                                        <span>TicketCount</span>
-                                                    </td>
-                                                }
-                                                else if (messageModel.Rule == "#49")
-                                                {
-                                                    <td style="width:200px" colspan="2">
-                                                        <span>TotalCheckSumAgg</span>
-                                                    </td>
-                                                }
-                                            </tr>
-                                            <tr>
-                                                @if (row.Value != null)
-                                                {
-                                                    <td>@row.Value.TableName</td>
-                                                    <td style="text-align:right">@row.Value.SiteDBGroupID</td>
-                                                    <td style="text-align:right">@row.Value.Recommend</td>
-                                                    @if (messageModel.Rule == "#48")
-                                                    {
-                                                        <td>@row.Value.Status</td>
-                                                        <td style="text-align:right">@row.Value.TicketCount</td>
-                                                    }
-                                                    else if (messageModel.Rule == "#49")
-                                                    {
-                                                        <td style="text-align:right" colspan="2">@row.Value.TotalCheckSumAgg</td>
-                                                    }
-
-                                                }
-                                                else
-                                                {
-                                                    <td colspan="5" style="text-align:center">There is no data</td>
-                                                }
-                                            </tr>
-                                        </table>
-                                    </td>
+                                   
+                                    @if (row.Value != null)
+                                    {
+                                        <td>@row.Value.TableName</td>
+                                        <td style="text-align:right">@row.Value.SiteDBGroupID</td>
+                                        <td style="text-align:right">@row.Value.Recommend</td>
+                                        <td style="text-align:right">@row.Value.Mrecommend</td>
+                                        <td style="text-align:right">@row.Value.Srecommend</td>
+                                        @if (messageModel.Rule == "#48")
+                                        {
+                                            <td>@row.Value.Status</td>
+                                            <td style="text-align:right">@row.Value.TicketCount</td>
+                                        }
+                                        else if (messageModel.Rule == "#49")
+                                        {
+                                            <td style="text-align:right" colspan="2">@row.Value.TotalCheckSumAgg</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td colspan="7" style="text-align:center">There is no data</td>
+                                    }
                                 </tr>
                             }
                         </table>
