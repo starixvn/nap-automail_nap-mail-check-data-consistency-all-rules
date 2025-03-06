@@ -39,9 +39,9 @@
                                         {
                                             <li style="padding-bottom:5px">@rule</li>
                                         }
-                                    </ul>
+                                    </ul>                                   
                                 </td>
-                                <td>
+                                <td style="vertical-align:top">
                                     <table border="1" id="display" style="border-style:Solid;border-collapse:collapse; font-size:10pt; font-family:Tahoma, Arial, Verdana, Sans-Serif;">
                                         <tr style="height: 25px">
                                             <td style="text-align:center;width:30px; font-weight:bold">#</td>
@@ -87,6 +87,16 @@
             </tr>
         </tbody>
     </table>
+
+    <hr />
+    @foreach (var resultModel in data)
+    {
+        @foreach (string command in resultModel.CommandList)
+        {
+            <p style="padding-bottom:5px">@command</p>
+        }
+    }
+
     <br />
     <div>
         Thanks and best regards, <br /> <br />

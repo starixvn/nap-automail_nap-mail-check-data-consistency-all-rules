@@ -17,6 +17,8 @@ public class ResultModel
 
     public List<string> RulesList { get; set; } = [];
 
+    public List<string> CommandList { get; set; } = [];
+
     public DateTime CurrentTime { get; set; }
 
     public int MaxCust_New { get; set; }
