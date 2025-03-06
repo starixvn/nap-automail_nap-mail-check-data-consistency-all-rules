@@ -39,6 +39,13 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
         resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
         resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking_DBTP - DBTP/bodb02");
+
+        if (resultModel.CustListJson == null) return;
+        var custListJsonBase64 = Convert.ToBase64String(resultModel.CustListJson);
+        resultModel.CommandList.Add("DECLARE @CustListJson VARBINARY(MAX) = NULL;");
+        resultModel.CommandList.Add($"DECLARE @CustListJsonBase64 NVARCHAR(MAX) = '{custListJsonBase64}'");
+        resultModel.CommandList.Add("SET @CustListJson = CAST(N'' AS XML).value('xs:base64Binary(sql:variable(\"@CustListJsonBase64\"))', 'VARBINARY(MAX)');");
+        resultModel.CommandList.Add("SELECT CustID FROM OPENJSON(CAST(DECOMPRESS(@CustListJson) AS NVARCHAR(MAX))) WITH(CustID INT);");
     }
 
     private void QueryRule207CusInfoInHouse(DataConsistencyConfigModel config, ResultModel resultModel)

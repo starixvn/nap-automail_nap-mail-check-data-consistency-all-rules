@@ -23,6 +23,7 @@ public class DataServiceRule207Imp(IDynamicRepository repository) : DataServiceR
             SMAListJson = smaListJson,
             CustListJson = custlistJson
         };
+
         var result = repository.FetchMultiple<CustInfoTable1Model, CustInfoTable2Model>(criteria);
 
         var table1 = result.FirstResultSet.ToList();
