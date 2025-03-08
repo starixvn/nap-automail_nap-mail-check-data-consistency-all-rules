@@ -12,8 +12,7 @@ public interface MainRule46Service
 }
 
 public class MainRule46ServiceImp(
-    Log log,
-    DataService dataService,
+    Log log,    
     RefineDataService refineDataService,
     MailService mailService)
     : MainRule46Service
@@ -35,9 +34,11 @@ public class MainRule46ServiceImp(
         const int second = 60;
         const int minute = 2;
         interval = minute * second * millisecond;
-        timer = new Timer();
-        timer.Enabled = true;
-        timer.Interval = interval;
+        timer = new Timer
+        {
+            Enabled = true,
+            Interval = interval
+        };
         timer.Elapsed += TimerElapsed;
     }
 

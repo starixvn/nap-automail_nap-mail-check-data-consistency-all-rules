@@ -19,7 +19,7 @@ public class MainBackgroundRule205Service(MainRule205Service rule205Service, Log
             if (await um.IsUnderMaintenanceAsync()) continue;
 
             log.Log("Fanex.CheckDataConsistency.Service - Rule 205");
-            // rule205Service.Execute();
+            rule205Service.Execute();
             await Task.Delay(delay, stoppingToken);
         }
     }

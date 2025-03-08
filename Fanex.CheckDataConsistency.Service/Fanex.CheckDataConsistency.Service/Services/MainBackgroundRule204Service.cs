@@ -22,7 +22,7 @@ public class MainBackgroundRule204Service(MainRule204Service rule204Service, Log
             }
 
             log.Log("Fanex.CheckDataConsistency.Service - Rule 204");
-            //  rule204Service.Execute();
+            rule204Service.Execute();
             await Task.Delay(delay, stoppingToken);
         }
     }
