@@ -61,6 +61,7 @@ public class MainRule207ServiceImp(
     private ResultModel CheckRule207Customer()
     {
         var configs = dataService.GetConfigData();
+
         var resultModel = new ResultModel();
         var config = configs.FirstOrDefault(s => s.GroupId == 2 && s.RuleNumber == 207 && s.TableName == "CustInfo");
         if (config != null)

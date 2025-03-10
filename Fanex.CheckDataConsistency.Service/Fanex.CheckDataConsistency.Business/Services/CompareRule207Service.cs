@@ -38,14 +38,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         resultModel.RulesList.Add("207 - Check sum/count of new records of CustInfo table between DBCust and all Repl servers that apply in-house");
         resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
         resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
-        resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking_DBTP - DBTP/bodb02");
-
-        if (resultModel.CustListJson == null) return;
-        var custListJsonBase64 = Convert.ToBase64String(resultModel.CustListJson);
-        resultModel.CommandList.Add("DECLARE @CustListJson VARBINARY(MAX) = NULL;");
-        resultModel.CommandList.Add($"DECLARE @CustListJsonBase64 NVARCHAR(MAX) = '{custListJsonBase64}'");
-        resultModel.CommandList.Add("SET @CustListJson = CAST(N'' AS XML).value('xs:base64Binary(sql:variable(\"@CustListJsonBase64\"))', 'VARBINARY(MAX)');");
-        resultModel.CommandList.Add("SELECT CustID FROM OPENJSON(CAST(DECOMPRESS(@CustListJson) AS NVARCHAR(MAX))) WITH(CustID INT);");
+        resultModel.RulesList.Add("DBA_Consistency_Custinfo_InhouseRepl_Checking_DBTP - DBTP-bodb02");
+        resultModel.RulesList.Add("DBA_Consistency_CustInfo_InhouseRepl_Checking_DBPRO - DBCUST-CustDB,DBPRO-bodb02");
     }
 
     private void QueryRule207CusInfoInHouse(DataConsistencyConfigModel config, ResultModel resultModel)
@@ -53,6 +47,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         RowCount = 1;
         var dictResult = new Dictionary<string, CustInfoTable1Model>();
         var customerFromDBCUST = CustInfoFromDbcustAndDBTP(config, resultModel, dictResult);
+
+        CustInfoFromDbcustAndDBPRO(config, resultModel, dictResult);
         CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
 
         var smaShortList = new List<SMAModel>();
@@ -113,13 +109,13 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         return customerFromDBCUST;
     }
 
-    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
+    private void CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName + "_DBPRO", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var customerFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
-        var customerFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBPRO, config.TableName, config.SpName + "_DBPRO", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var customerFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
         customerFromDBCUST.Item1.ForEach(row =>
         {
             var dataFromDBPRO = customerFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
@@ -142,8 +138,6 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             dictResult.Add($"{RowCount}_{DB.DBPRO}", dataFromDBPRO);
             RowCount++;
         });
-
-        return customerFromDBCUST;
     }
 
     private void CustomerFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
@@ -167,7 +161,6 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             DB.DBDW2,
             DB.DB04ADMIN1,
             DB.DB04ADMIN2,
-          //  DB.DB02
         };
 
         dbReplList.ForEach(dbRepl =>

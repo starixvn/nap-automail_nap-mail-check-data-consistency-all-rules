@@ -49,7 +49,7 @@ public class CompareRule204ServiceImp(DataService dataService) : CompareRule204S
 
         custInfoMiniFromDBGLOB.Item1.ForEach(row =>
         {
-            var dataFromDBTP = custInfoMiniFromDBTP.FirstOrDefault(s => s.Recommend == row.Recommend);
+            var dataFromDBTP = custInfoMiniFromDBTP.FirstOrDefault(s => s.Recommend == row.Recommend && s.Mrecommend == row.Mrecommend && s.Srecommend == row.Srecommend);
             if (dataFromDBTP != null) return;
             dictResult.Add($"{rowCount}_{DB.DBGLOB}", row);
             dictResult.Add($"{rowCount}_{DB.DBTP}", null);
@@ -58,7 +58,7 @@ public class CompareRule204ServiceImp(DataService dataService) : CompareRule204S
 
         custInfoMiniFromDBGLOB.Item1.ForEach(row =>
         {
-            var dataFromDBTP = custInfoMiniFromDBTP.FirstOrDefault(s => s.Recommend == row.Recommend && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+            var dataFromDBTP = custInfoMiniFromDBTP.FirstOrDefault(s => s.Recommend == row.Recommend && s.Mrecommend == row.Mrecommend && s.Srecommend == row.Srecommend && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
             if (dataFromDBTP == null) return;
             dictResult.Add($"{rowCount}_{DB.DBGLOB}", row);
             dictResult.Add($"{rowCount}_{DB.DBTP}", dataFromDBTP);

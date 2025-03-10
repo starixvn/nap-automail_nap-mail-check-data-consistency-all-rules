@@ -15,6 +15,8 @@ public class ResultModel
 
     public int RetryCounter { get; set; }
 
+    public int RetryCounterFromDBCUST { get; set; }
+
     public List<string> RulesList { get; set; } = [];
 
     public List<string> CommandList { get; set; } = [];
