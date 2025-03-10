@@ -113,6 +113,39 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         return customerFromDBCUST;
     }
 
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
+        IDictionary<string, CustInfoTable1Model> dictResult)
+    {
+        var customerFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName + "_DBPRO", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
+
+        var customerFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBPRO, config.TableName, config.SpName + "_DBPRO", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        customerFromDBCUST.Item1.ForEach(row =>
+        {
+            var dataFromDBPRO = customerFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                          && s.Mrecommend == row.Mrecommend
+                                                                          && s.Srecommend == row.Srecommend);
+            if (dataFromDBPRO != null) return;
+            dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
+            dictResult.Add($"{RowCount}_{DB.DBPRO}", null);
+            RowCount++;
+        });
+
+        customerFromDBCUST.Item1.ForEach(row =>
+        {
+            var dataFromDBPRO = customerFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                          && s.Mrecommend == row.Mrecommend
+                                                                          && s.Srecommend == row.Srecommend
+                                                                          && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+            if (dataFromDBPRO == null) return;
+            dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
+            dictResult.Add($"{RowCount}_{DB.DBPRO}", dataFromDBPRO);
+            RowCount++;
+        });
+
+        return customerFromDBCUST;
+    }
+
     private void CustomerFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {

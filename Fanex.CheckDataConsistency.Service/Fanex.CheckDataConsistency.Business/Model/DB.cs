@@ -24,7 +24,7 @@ public static class DB
     public const string DBDW2 = "DBDW2";
     public const string DB04ADMIN1 = "DB04ADMIN1";
     public const string DB04ADMIN2 = "DB04ADMIN2";
-    public const string DB02 = "DB02";
+    public const string DBPRO = "DBPRO";
 
     public static List<string> DB05X06X = ["DB052", "DB053", "DB061", "DB062"];
     public static List<string> MainDB { get; } = ["DBCUST"];
