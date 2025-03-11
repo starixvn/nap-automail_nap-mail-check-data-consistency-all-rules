@@ -15,7 +15,7 @@ public class MainRule52ServiceImp(
     MailService mailService)
     : MainRule52Service
 {
-    private bool hasData = false;
+    private bool hasData;
 
     public JobMessage Execute()
     {

@@ -5,8 +5,6 @@ namespace Fanex.CheckDataConsistency.Business.Criteria;
 
 public class CriteriaData(string spName) : CriteriaBase
 {
-    private string spName { get; set; } = spName;
-
     public int CustId { get; set; }
 
     public DateTime? WinlostDate { get; set; }

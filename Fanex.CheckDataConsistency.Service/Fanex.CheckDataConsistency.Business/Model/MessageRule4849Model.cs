@@ -12,7 +12,7 @@ public class MessageRule4849Model
 
     public Dictionary<string, ConsistencyCheckModel> Data { get; set; }
 
-    public List<Rule4849FromToModel> FromToDates { get; set; } = new List<Rule4849FromToModel>();
+    public List<Rule4849FromToModel> FromToDates { get; set; } = [];
 
-    public bool IsSeletTop { get; set; }
+    public bool IsSelectTop { get; set; }
 }

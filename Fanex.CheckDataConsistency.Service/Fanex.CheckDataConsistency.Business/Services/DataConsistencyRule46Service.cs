@@ -89,17 +89,17 @@ public class DataConsistencyRule46ServiceImp(DataService dataService) : DataCons
 
         siteDbData.ForEach(siteDbRow =>
         {
-            var consisRow = dataConsistency.FirstOrDefault(s => s.TableName == siteDbRow.TableName
+            var consistencyRow = dataConsistency.FirstOrDefault(s => s.TableName == siteDbRow.TableName
                                                                 && s.SiteDBGroupID == siteDbRow.SiteDBGroupID
                                                                 && s.Recommend == siteDbRow.Recommend);
 
-            if (consisRow == null)
+            if (consistencyRow == null)
             {
                 notExistsIndex++;
 
                 if (!notExistsRows.ContainsKey($"{notExistsIndex}-{DB.DBCONSISTENCY}"))
                 {
-                    notExistsRows.Add($"{notExistsIndex}-{DB.DBCONSISTENCY}", consisRow);
+                    notExistsRows.Add($"{notExistsIndex}-{DB.DBCONSISTENCY}", consistencyRow);
                 }
 
                 if (!notExistsRows.ContainsKey($"{notExistsIndex}-{siteDb}"))
@@ -114,24 +114,27 @@ public class DataConsistencyRule46ServiceImp(DataService dataService) : DataCons
             }
             else
             {
-                if (siteDbRow.TicketCount != consisRow.TicketCount || siteDbRow.TotalCheckSum != consisRow.TotalCheckSum)
+                if (siteDbRow.TicketCount == consistencyRow.TicketCount &&
+                    siteDbRow.TotalCheckSum == consistencyRow.TotalCheckSum)
                 {
-                    diffIndex++;
+                    return;
+                }
 
-                    if (!diffRows.ContainsKey($"{diffIndex}-{DB.DBCONSISTENCY}"))
-                    {
-                        diffRows.Add($"{diffIndex}-{DB.DBCONSISTENCY}", consisRow);
-                    }
+                diffIndex++;
 
-                    if (!diffRows.ContainsKey($"{diffIndex}-{siteDb}"))
-                    {
-                        diffRows.Add($"{diffIndex}-{siteDb}", siteDbRow);
-                    }
+                if (!diffRows.ContainsKey($"{diffIndex}-{DB.DBCONSISTENCY}"))
+                {
+                    diffRows.Add($"{diffIndex}-{DB.DBCONSISTENCY}", consistencyRow);
+                }
 
-                    if (!spList.ContainsKey(siteDb))
-                    {
-                        spList.Add(siteDb, $"{dataSiteDb.Value.SPNameOutputResult}, {dataSiteDb.Value.SPNameDataResult}");
-                    }
+                if (!diffRows.ContainsKey($"{diffIndex}-{siteDb}"))
+                {
+                    diffRows.Add($"{diffIndex}-{siteDb}", siteDbRow);
+                }
+
+                if (!spList.ContainsKey(siteDb))
+                {
+                    spList.Add(siteDb, $"{dataSiteDb.Value.SPNameOutputResult}, {dataSiteDb.Value.SPNameDataResult}");
                 }
             }
         });
@@ -174,24 +177,26 @@ public class DataConsistencyRule46ServiceImp(DataService dataService) : DataCons
                 }
                 else
                 {
-                    if (siteDbRow.TicketCount != dbXRow.TicketCount || siteDbRow.TotalCheckSum != dbXRow.TotalCheckSum)
+                    if (siteDbRow.TicketCount == dbXRow.TicketCount && siteDbRow.TotalCheckSum == dbXRow.TotalCheckSum)
                     {
-                        diffIndex++;
+                        continue;
+                    }
 
-                        if (!diffRows.ContainsKey($"{diffIndex}-{siteDb}"))
-                        {
-                            diffRows.Add($"{diffIndex}-{siteDb}", siteDbRow);
-                        }
+                    diffIndex++;
 
-                        if (!diffRows.ContainsKey($"{diffIndex}-{dbX.Key}"))
-                        {
-                            diffRows.Add($"{diffIndex}-{dbX.Key}", dbXRow);
-                        }
+                    if (!diffRows.ContainsKey($"{diffIndex}-{siteDb}"))
+                    {
+                        diffRows.Add($"{diffIndex}-{siteDb}", siteDbRow);
+                    }
 
-                        if (!spList.ContainsKey(siteDb))
-                        {
-                            spList.Add(siteDb, $"{dataSiteDb.Value.SPNameOutputResult}, {dataSiteDb.Value.SPNameDataResult}");
-                        }
+                    if (!diffRows.ContainsKey($"{diffIndex}-{dbX.Key}"))
+                    {
+                        diffRows.Add($"{diffIndex}-{dbX.Key}", dbXRow);
+                    }
+
+                    if (!spList.ContainsKey(siteDb))
+                    {
+                        spList.Add(siteDb, $"{dataSiteDb.Value.SPNameOutputResult}, {dataSiteDb.Value.SPNameDataResult}");
                     }
                 }
             }
@@ -220,17 +225,18 @@ public class DataConsistencyRule46ServiceImp(DataService dataService) : DataCons
 
     public void UpdateSiteDBSystemSettingRule46(Dictionary<string, Rule46DTO> dataSiteDBs)
     {
-        foreach (var dataSiteDB in dataSiteDBs)
+        foreach (var (siteDB, rule46Dto) in dataSiteDBs)
         {
-            var siteDBOutputResult = dataSiteDB.Value.SiteDBOutputResult;
-            var siteDB = dataSiteDB.Key;
+            var siteDBOutputResult = rule46Dto.SiteDBOutputResult;
             var resultSiteDB = dataService.UpdateSiteDBSystemSettingRule46(siteDB, siteDBOutputResult);
 
-            if (resultSiteDB.ErrCode > 0)
+            if (resultSiteDB.ErrCode <= 0)
             {
-                var errMsg = $"Fanex.CheckDataConsistencyRule46.Service: {resultSiteDB.ErrMsg}";
-                throw new ArgumentException(errMsg);
+                continue;
             }
+
+            var errMsg = $"Fanex.CheckDataConsistencyRule46.Service: {resultSiteDB.ErrMsg}";
+            throw new ArgumentException(errMsg);
         }
     }
 }

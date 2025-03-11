@@ -160,7 +160,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             DB.DBDW,
             DB.DBDW2,
             DB.DB04ADMIN1,
-            DB.DB04ADMIN2,
+            DB.DB04ADMIN2
         };
 
         dbReplList.ForEach(dbRepl =>

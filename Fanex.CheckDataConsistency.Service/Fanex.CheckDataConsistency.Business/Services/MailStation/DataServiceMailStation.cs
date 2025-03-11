@@ -34,12 +34,12 @@ public class DataServiceMailStationImp(IDynamicRepository repository, Log log) :
     {
         var task = QueryMailTask().FirstOrDefault(s => s.Status == 1);
         log.Log($"The Rule 48-49 - UpdateMailStatus - {JsonConvert.SerializeObject(task, Formatting.Indented)}");
-        var taskId = task != null ? task.MailTaskID : 0;
+        var taskId = task?.MailTaskID ?? 0;
         var command = new UpdateMailStatusCommand
         {
             TaskID = taskId,
             Status = (int)jobStatus,
-            LastSent = DateTime.Now,
+            LastSent = DateTime.Now
         };
 
         repository.Execute(command);

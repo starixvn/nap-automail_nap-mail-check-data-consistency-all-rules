@@ -18,8 +18,6 @@ public class MainRule50ServiceImp(
     IConfiguration configuration)
     : MainRule50Service
 {
-    private readonly DataService dataService = dataService;
-    private readonly IConfiguration configuration = configuration;
     private bool isSendMail;
 
     public JobMessage Execute(string rule)

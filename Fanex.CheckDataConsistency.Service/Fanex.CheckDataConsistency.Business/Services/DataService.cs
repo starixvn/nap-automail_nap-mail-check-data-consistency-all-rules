@@ -80,26 +80,22 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
     public List<SiteDBModel> QuerySiteDB(string siteDB)
     {
         var criteria = new SiteDBConfigCriteria();
-        if (string.IsNullOrEmpty(siteDB))
-        {
-            return repository.Fetch<SiteDBModel>(criteria).Where(s => s.SiteDBGroupID > 0).ToList();
-        }
-
-        return repository.Fetch<SiteDBModel>(criteria).Where(s => s.SiteDBGroupID > 0 && s.LinkedServerName.Equals(siteDB)).ToList();
+        return string.IsNullOrEmpty(siteDB) 
+            ? repository.Fetch<SiteDBModel>(criteria).Where(s => s.SiteDBGroupID > 0).ToList() 
+            : repository.Fetch<SiteDBModel>(criteria).Where(s => s.SiteDBGroupID > 0 && s.LinkedServerName.Equals(siteDB)).ToList();
     }
 
     public Dictionary<string, List<ConsistencyCheckModel>> Rule48SelectSiteDBConsistencyCheckTicketCount(DateTime currentTime)
     {
         var dict = new Dictionary<string, List<ConsistencyCheckModel>>();
         var reTryInfos = AppConfigService.RetryInfos[Rule.Rule48];
-        string siteDB;
         string recommendList;
         string tableName;
         var count = 1;
 
         foreach (var reTryInfo in reTryInfos)
         {
-            siteDB = reTryInfo.SiteDB;
+            var siteDB = reTryInfo.SiteDB;
             recommendList = reTryInfo.RecommendList;
             tableName = reTryInfo.TableName;
             var siteDbs = QuerySiteDB(siteDB);
@@ -238,7 +234,6 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
     {
         string recommendList;
         string tableName;
-        string siteDB;
 
         var dict = new Dictionary<string, List<ConsistencyCheckModel>>();
         var retryInfos = AppConfigService.RetryInfos[Rule.Rule49];
@@ -246,7 +241,7 @@ public class DataServiceImp(IDynamicRepository repository, Log log) : DataServic
 
         foreach (var retryInfo in retryInfos)
         {
-            siteDB = retryInfo.SiteDB;
+            var siteDB = retryInfo.SiteDB;
             tableName = retryInfo.TableName;
             recommendList = retryInfo.RecommendList;
             var siteDbs = QuerySiteDB(siteDB);

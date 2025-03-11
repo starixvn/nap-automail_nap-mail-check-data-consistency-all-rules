@@ -17,9 +17,9 @@ public class DataConsistencyRule47ServiceImp(DataService dataService) : DataCons
         var result = new List<MessageRule47Model>();
         var dataSiteDBs = dataService.QueryRule47();
 
-        foreach (var dataSiteDB in dataSiteDBs)
+        foreach (var (siteDB, rule47Dto) in dataSiteDBs)
         {
-            var dBOutputResult = dataSiteDB.Value.DBOutputResult;
+            var dBOutputResult = rule47Dto.DBOutputResult;
 
             if (dBOutputResult.ErrCode > 0)
             {
@@ -27,34 +27,35 @@ public class DataConsistencyRule47ServiceImp(DataService dataService) : DataCons
                 throw new Exception(errMsg);
             }
 
-            var siteDB = dataSiteDB.Key;
-            var dBDataResult = dataSiteDB.Value.DBDataResult;
+            var dBDataResult = rule47Dto.DBDataResult;
 
-            if (dBDataResult.Count > 0)
+            if (dBDataResult.Count <= 0)
             {
-                var db = siteDB.Split('_')[1];
-                var data = new Dictionary<string, ConsistencyRule47Model>();
-                var index = 0;
-
-                dBDataResult.ForEach(row =>
-                {
-                    index++;
-                    data.Add($"{index}-{db}", row);
-                });
-
-                var message = new MessageRule47Model
-                {
-                    Rule = "#47",
-                    Message = "Check if transfer tickets are inserted into the correct SiteDBGroupID by reverting the transID",
-                    SPName = $"{dataSiteDB.Value.SPNameOutputResult} " +
-                             $"{dataSiteDB.Value.SPNameDataResult} " +
-                             $"{JsonConvert.SerializeObject(dataSiteDB.Value.DBOutputResult, Formatting.Indented)}",
-                    DB = DB.DBCONSISTENCY,
-                    Data = data
-                };
-
-                result.Add(message);
+                continue;
             }
+
+            var db = siteDB.Split('_')[1];
+            var data = new Dictionary<string, ConsistencyRule47Model>();
+            var index = 0;
+
+            dBDataResult.ForEach(row =>
+            {
+                index++;
+                data.Add($"{index}-{db}", row);
+            });
+
+            var message = new MessageRule47Model
+            {
+                Rule = "#47",
+                Message = "Check if transfer tickets are inserted into the correct SiteDBGroupID by reverting the transID",
+                SPName = $"{rule47Dto.SPNameOutputResult} " +
+                         $"{rule47Dto.SPNameDataResult} " +
+                         $"{JsonConvert.SerializeObject(rule47Dto.DBOutputResult, Formatting.Indented)}",
+                DB = DB.DBCONSISTENCY,
+                Data = data
+            };
+
+            result.Add(message);
         }
 
         return result;

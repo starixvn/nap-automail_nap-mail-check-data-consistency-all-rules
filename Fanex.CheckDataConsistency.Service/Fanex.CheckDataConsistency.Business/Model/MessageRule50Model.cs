@@ -10,7 +10,7 @@ public class MessageRule50Model
 
     public string SPName { get; set; }
 
-    public Dictionary<string, List<TicketCheckingModel>> Data { get; set; } = new Dictionary<string, List<TicketCheckingModel>>();
+    public Dictionary<string, List<TicketCheckingModel>> Data { get; set; } = new();
 
-    public Dictionary<string, MBUTicketCountModel> MBUData { get; set; } = new Dictionary<string, MBUTicketCountModel>();
+    public Dictionary<string, MBUTicketCountModel> MBUData { get; set; } = new();
 }

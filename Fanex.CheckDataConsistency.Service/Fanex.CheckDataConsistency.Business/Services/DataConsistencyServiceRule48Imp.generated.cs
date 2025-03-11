@@ -116,7 +116,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                 SPName = "DBA_Consistency_CheckTicketCount, SiteDB_DBA_Consistency_CheckTicketCount",
                 Data = notExistsRows.Skip(0).Take(Rule.TOP100).ToDictionary(d => d.Key, d => d.Value),
                 FromToDates = dataConsistency.Item2.Skip(0).Take(Rule.TOP1).ToList(),
-                IsSeletTop = notExistsRows.Count > Rule.TOP100
+                IsSelectTop = notExistsRows.Count > Rule.TOP100
             };
 
             var diffModel = new MessageRule4849Model
@@ -126,7 +126,7 @@ namespace Fanex.CheckDataConsistency.Business.Services
                 SPName = "DBA_Consistency_CheckTicketCount, SiteDB_DBA_Consistency_CheckTicketCount",
                 Data = diffRows.Skip(0).Take(Rule.TOP100).ToDictionary(d => d.Key, d => d.Value),
                 FromToDates = dataConsistency.Item2.Skip(0).Take(Rule.TOP1).ToList(),
-                IsSeletTop = diffRows.Count > Rule.TOP100
+                IsSelectTop = diffRows.Count > Rule.TOP100
             };
 
             if (notExistsModel.Data.Count > 0)

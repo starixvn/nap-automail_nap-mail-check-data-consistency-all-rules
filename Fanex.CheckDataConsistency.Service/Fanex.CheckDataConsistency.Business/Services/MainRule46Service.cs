@@ -20,7 +20,7 @@ public class MainRule46ServiceImp(
     private Timer timer;
 
     private const int MaxRetry = 4;
-    private int retryCounter = 0;
+    private int retryCounter;
     private double interval = 120000;
 
     ~MainRule46ServiceImp()
@@ -148,10 +148,12 @@ public class MainRule46ServiceImp(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
+        if (!disposing)
         {
-            timer.Dispose();
-            timer = null;
+            return;
         }
+
+        timer.Dispose();
+        timer = null;
     }
 }
