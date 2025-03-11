@@ -5,7 +5,7 @@ namespace Fanex.CheckDataConsistency.Business.Services;
 
 public static class StringHasher
 {
-    public static string HashLongStringToSmall(string input)
+    public static string HashLongStringToSmallString(string input)
     {
         if (string.IsNullOrEmpty(input)) return "null";
 

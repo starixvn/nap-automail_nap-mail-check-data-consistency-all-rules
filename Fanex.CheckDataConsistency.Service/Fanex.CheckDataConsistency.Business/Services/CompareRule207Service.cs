@@ -15,6 +15,7 @@ public interface CompareRule207Service
 public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, DataService dataService) : CompareRule207Service
 {
     private int RowCount { get; set; }
+    private string PreviousHashCustInfoFromDBCUST { get; set; }
 
     public void CustInfoInHouseChecking(DataConsistencyConfigModel config, ResultModel resultModel)
     {
@@ -22,6 +23,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         while (resultModel.DictResult.Count > 0 && resultModel.RetryCounter < 3)
         {
             resultModel.RetryCounter++;
+            resultModel.RetryCounterFromDBCUST = 0;
             QueryRule207CusInfoInHouse(config, resultModel);
             System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
         }
@@ -49,7 +51,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         var customerFromDBCUST = CustInfoFromDbcustAndDBTP(config, resultModel, dictResult);
 
         CustInfoFromDbcustAndDBPRO(config, resultModel, dictResult);
-        CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+        CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
 
         var smaShortList = new List<SMAModel>();
         dictResult.Where(s => s.Value != null)
@@ -79,7 +81,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var customerFromDBCUST = CustInfoFromDbcust(config, resultModel);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
         var customerFromDBTP = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
@@ -109,16 +111,49 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         return customerFromDBCUST;
     }
 
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel)
+    {
+        var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+        var hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
+        if (string.IsNullOrEmpty(PreviousHashCustInfoFromDBCUST))
+        {
+            PreviousHashCustInfoFromDBCUST = hashCustInfoFromDBCUST;
+        }
+
+        if (PreviousHashCustInfoFromDBCUST == hashCustInfoFromDBCUST)
+        {
+            return custInfoFromDBCUST;
+        }
+
+        while (resultModel.RetryCounterFromDBCUST < 3)
+        {
+            custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+            hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
+            if (PreviousHashCustInfoFromDBCUST == hashCustInfoFromDBCUST)
+            {
+                break;
+            }
+
+            PreviousHashCustInfoFromDBCUST = hashCustInfoFromDBCUST;
+            resultModel.RetryCounterFromDBCUST++;
+            System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
+        }
+
+        return custInfoFromDBCUST;
+    }
+
     private void CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
-        resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
+        var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
+        resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
 
-        var customerFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
-        customerFromDBCUST.Item1.ForEach(row =>
+        var custInfoFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
+        custInfoFromDBCUST.Item1.ForEach(row =>
         {
-            var dataFromDBPRO = customerFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+            var dataFromDBPRO = custInfoFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
                                                                           && s.Mrecommend == row.Mrecommend
                                                                           && s.Srecommend == row.Srecommend);
             if (dataFromDBPRO != null) return;
@@ -127,9 +162,9 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             RowCount++;
         });
 
-        customerFromDBCUST.Item1.ForEach(row =>
+        custInfoFromDBCUST.Item1.ForEach(row =>
         {
-            var dataFromDBPRO = customerFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+            var dataFromDBPRO = custInfoFromDBPRO.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
                                                                           && s.Mrecommend == row.Mrecommend
                                                                           && s.Srecommend == row.Srecommend
                                                                           && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
@@ -140,7 +175,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         });
     }
 
-    private void CustomerFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
+    private void CustInfoFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
         var dbReplList = new List<string>
@@ -165,10 +200,10 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
 
         dbReplList.ForEach(dbRepl =>
         {
-            var customerFromReplDB = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(dbRepl, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+            var custInfoFromReplDB = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(dbRepl, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
             dbCust.ForEach(row =>
             {
-                var dataFromDBRepl = customerFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+                var dataFromDBRepl = custInfoFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
                                                                               && s.Mrecommend == row.Mrecommend
                                                                               && s.Srecommend == row.Srecommend);
                 if (dataFromDBRepl != null) return;
@@ -179,7 +214,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
 
             dbCust.ForEach(row =>
             {
-                var dataFromDBRepl = customerFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
+                var dataFromDBRepl = custInfoFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
                                                                               && s.Mrecommend == row.Mrecommend
                                                                               && s.Srecommend == row.Srecommend
                                                                               && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
