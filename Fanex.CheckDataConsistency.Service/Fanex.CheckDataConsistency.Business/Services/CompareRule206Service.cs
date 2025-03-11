@@ -15,6 +15,7 @@ public interface CompareRule206Service
 public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, DataService dataService) : CompareRule206Service
 {
     private int RowCount { get; set; }
+    private string PreviousHashCustomerFromDBCUST { get; set; }
 
     public void CustomerInHouseChecking(DataConsistencyConfigModel config, ResultModel resultModel)
     {
@@ -22,6 +23,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         while (resultModel.DictResult.Count > 0 && resultModel.RetryCounter < 3)
         {
             resultModel.RetryCounter++;
+            resultModel.RetryCounterFromDBCUST = 0;
             QueryRule206CustomerInHouse(config, resultModel);
             System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
         }
@@ -39,13 +41,6 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
         resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
         resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking_DBTP - DBTP/bodb02");
-
-        if (resultModel.CustListJson == null) return;
-        var custListJsonBase64 = Convert.ToBase64String(resultModel.CustListJson);
-        resultModel.CommandList.Add("DECLARE @CustListJson VARBINARY(MAX) = NULL;");
-        resultModel.CommandList.Add($"DECLARE @CustListJsonBase64 NVARCHAR(MAX) = '{custListJsonBase64}'");
-        resultModel.CommandList.Add("SET @CustListJson = CAST(N'' AS XML).value('xs:base64Binary(sql:variable(\"@CustListJsonBase64\"))', 'VARBINARY(MAX)');");
-        resultModel.CommandList.Add("SELECT CustID FROM OPENJSON(CAST(DECOMPRESS(@CustListJson) AS NVARCHAR(MAX))) WITH(CustID INT);");
     }
 
     private void QueryRule206CustomerInHouse(DataConsistencyConfigModel config, ResultModel resultModel)
@@ -83,7 +78,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustomerFromDbcustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var customerFromDBCUST = CustomerFromDbcust(config, resultModel);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
         var customerFromDBTP = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
@@ -109,6 +104,39 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
             dictResult.Add($"{RowCount}_{DB.DBTP}", dataFromDBTP);
             RowCount++;
         });
+
+        return customerFromDBCUST;
+    }
+
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustomerFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel)
+    {
+        var customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+        var jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
+        var hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
+        if (string.IsNullOrEmpty(PreviousHashCustomerFromDBCUST))
+        {
+            PreviousHashCustomerFromDBCUST = hashCustomerFromDBCUST;
+        }
+
+        if (PreviousHashCustomerFromDBCUST == hashCustomerFromDBCUST)
+        {
+            return customerFromDBCUST;
+        }
+
+        while (resultModel.RetryCounterFromDBCUST < 3)
+        {
+            customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
+            jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
+            hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
+            if (PreviousHashCustomerFromDBCUST == hashCustomerFromDBCUST)
+            {
+                break;
+            }
+
+            PreviousHashCustomerFromDBCUST = hashCustomerFromDBCUST;
+            resultModel.RetryCounterFromDBCUST++;
+            System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
+        }
 
         return customerFromDBCUST;
     }
