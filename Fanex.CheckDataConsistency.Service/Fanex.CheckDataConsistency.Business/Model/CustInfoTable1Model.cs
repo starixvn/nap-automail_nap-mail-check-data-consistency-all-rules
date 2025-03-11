@@ -4,13 +4,13 @@ public class CustInfoTable1Model
 {
     public string TableName { get; set; } = string.Empty;
 
-    public long Recommend { get; set; }
+    public string Recommend { get; set; }
 
-    public long Mrecommend { get; set; }
+    public string Mrecommend { get; set; }
 
-    public long Srecommend { get; set; }
+    public string Srecommend { get; set; }
 
-    public long CustId { get; set; }
+    public string CustId { get; set; }
 
     public int RowCount { get; set; }
 

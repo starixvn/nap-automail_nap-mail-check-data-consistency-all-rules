@@ -2,9 +2,9 @@
 
 public class SMAModel
 {
-    public long Recommend { get; set; }
+    public string Recommend { get; set; }
 
-    public long Mrecommend { get; set; }
+    public string Mrecommend { get; set; }
 
-    public long Srecommend { get; set; }
+    public string Srecommend { get; set; }
 }

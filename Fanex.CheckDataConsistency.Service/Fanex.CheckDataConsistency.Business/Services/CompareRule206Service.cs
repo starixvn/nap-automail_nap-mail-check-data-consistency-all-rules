@@ -20,27 +20,10 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
     public void CustomerInHouseChecking(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         QueryRule206CustomerInHouse(config, resultModel);
-        while (resultModel.DictResult.Count > 0 && resultModel.RetryCounter < 3)
-        {
-            resultModel.RetryCounter++;
-            resultModel.RetryCounterFromDBCUST = 0;
-            QueryRule206CustomerInHouse(config, resultModel);
-            System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
-        }
+        RetryQueryIfNeeded(config, resultModel);
 
-        var command = new DataConsistencyConfigUpdateCommand
-        {
-            RuleNumber = 206,
-            TableName = config.TableName,
-            VValue = $"{resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}"
-        };
-
-        dataService.UpdateConfig(command);
-
-        resultModel.RulesList.Add("206 - Check sum/count of new records of Customer table between DBCust and all Repl servers that apply in-house");
-        resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
-        resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
-        resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking_DBTP - DBTP/bodb02");
+        UpdateConfig(config, resultModel);
+        AddRulesToResult(resultModel, config);
     }
 
     private void QueryRule206CustomerInHouse(DataConsistencyConfigModel config, ResultModel resultModel)
@@ -50,8 +33,44 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         var customerFromDBCUST = CustomerFromDbcustAndDBTP(config, resultModel, dictResult);
         CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
 
-        var smaShortList = new List<SMAModel>();
-        dictResult.Where(s => s.Value != null)
+        UpdateResultModel(resultModel, dictResult, customerFromDBCUST);
+    }
+
+    private void RetryQueryIfNeeded(DataConsistencyConfigModel config, ResultModel resultModel)
+    {
+        while (resultModel.DictResult.Count > 0 && resultModel.RetryCounter < 3)
+        {
+            resultModel.RetryCounter++;
+            resultModel.RetryCounterFromDBCUST = 0;
+            PreviousHashCustomerFromDBCUST = string.Empty;
+            QueryRule206CustomerInHouse(config, resultModel);
+            System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
+        }
+    }
+
+    private void UpdateConfig(DataConsistencyConfigModel config, ResultModel resultModel)
+    {
+        var command = new DataConsistencyConfigUpdateCommand
+        {
+            RuleNumber = 206,
+            TableName = config.TableName,
+            VValue = $"{resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}"
+        };
+
+        dataService.UpdateConfig(command);
+    }
+
+    private static void AddRulesToResult(ResultModel resultModel, DataConsistencyConfigModel config)
+    {
+        resultModel.RulesList.Add("206 - Check sum/count of new records of Customer table between DBCust and all Repl servers that apply in-house");
+        resultModel.RulesList.Add($"RepUpdateTime From {config.VValue} To {resultModel.CurrentTime:yyyy-MM-dd HH:mm:ss.fff}");
+        resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking - DBCUST-CustDB,DBAGE-bodb02,DBBOF-bodb02,DBACC-bodb02,DBBAH-bodb02,DBSIG-CustDB,DBCTG-CustDB,DBWH-bodb02,DB04ADMIN1-bobd02");
+        resultModel.RulesList.Add("DBA_Consistency_Customer_InhouseRepl_Checking_DBTP - DBTP/bodb02");
+    }
+
+    private static void UpdateResultModel(ResultModel resultModel, Dictionary<string, CustInfoTable1Model> dictResult, Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> customerFromDBCUST)
+    {
+        var smaShortList = dictResult.Where(s => s.Value != null)
             .Select(s => new SMAModel
             {
                 Recommend = s.Value.Recommend,
@@ -59,11 +78,8 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
                 Srecommend = s.Value.Srecommend
             })
             .GroupBy(g => new { g.Recommend, g.Mrecommend, g.Srecommend })
-            .ToList()
-            .ForEach(sma =>
-            {
-                smaShortList.Add(new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend });
-            });
+            .Select(sma => new SMAModel { Recommend = sma.Key.Recommend, Mrecommend = sma.Key.Mrecommend, Srecommend = sma.Key.Srecommend })
+            .ToList();
 
         var smaListJson = JsonConvert.SerializeObject(smaShortList, Formatting.Indented);
         resultModel.DictResult = dictResult;
@@ -82,28 +98,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
         var customerFromDBTP = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        customerFromDBCUST.Item1.ForEach(row =>
-        {
-            var dataFromDBTP = customerFromDBTP.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
-                                                                          && s.Mrecommend == row.Mrecommend
-                                                                          && s.Srecommend == row.Srecommend);
-            if (dataFromDBTP != null) return;
-            dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
-            dictResult.Add($"{RowCount}_{DB.DBTP}", null);
-            RowCount++;
-        });
-
-        customerFromDBCUST.Item1.ForEach(row =>
-        {
-            var dataFromDBTP = customerFromDBTP.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
-                                                                          && s.Mrecommend == row.Mrecommend
-                                                                          && s.Srecommend == row.Srecommend
-                                                                          && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
-            if (dataFromDBTP == null) return;
-            dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
-            dictResult.Add($"{RowCount}_{DB.DBTP}", dataFromDBTP);
-            RowCount++;
-        });
+        CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
 
         return customerFromDBCUST;
     }
@@ -113,6 +108,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         var customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
         var jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
         var hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
+
         if (string.IsNullOrEmpty(PreviousHashCustomerFromDBCUST))
         {
             PreviousHashCustomerFromDBCUST = hashCustomerFromDBCUST;
@@ -123,11 +119,19 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
             return customerFromDBCUST;
         }
 
+        RetryCustomerFromDbcust(config, resultModel, ref customerFromDBCUST, ref jsonCustomerFromDBCUST, ref hashCustomerFromDBCUST);
+
+        return customerFromDBCUST;
+    }
+
+    private void RetryCustomerFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> customerFromDBCUST, ref string jsonCustomerFromDBCUST, ref string hashCustomerFromDBCUST)
+    {
         while (resultModel.RetryCounterFromDBCUST < 3)
         {
             customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
             jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
             hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
+
             if (PreviousHashCustomerFromDBCUST == hashCustomerFromDBCUST)
             {
                 break;
@@ -137,8 +141,6 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
             resultModel.RetryCounterFromDBCUST++;
             System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
         }
-
-        return customerFromDBCUST;
     }
 
     private void CustomerFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
@@ -167,28 +169,33 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         dbReplList.ForEach(dbRepl =>
         {
             var customerFromReplDB = dataServiceRule206.QueryCustomerInHouseCheckingRule206(dbRepl, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            dbCust.ForEach(row =>
-            {
-                var dataFromDBRepl = customerFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
-                                                                              && s.Mrecommend == row.Mrecommend
-                                                                              && s.Srecommend == row.Srecommend);
-                if (dataFromDBRepl != null) return;
-                dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
-                dictResult.Add($"{RowCount}_{dbRepl}", null);
-                RowCount++;
-            });
+            CompareAndAddToDictResult(dbCust, customerFromReplDB.Item1, dictResult, DB.DBCUST, dbRepl);
+        });
+    }
 
-            dbCust.ForEach(row =>
-            {
-                var dataFromDBRepl = customerFromReplDB.Item1.FirstOrDefault(s => s.Recommend == row.Recommend
-                                                                              && s.Mrecommend == row.Mrecommend
-                                                                              && s.Srecommend == row.Srecommend
-                                                                              && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
-                if (dataFromDBRepl == null) return;
-                dictResult.Add($"{RowCount}_{DB.DBCUST}", row);
-                dictResult.Add($"{RowCount}_{dbRepl}", dataFromDBRepl);
-                RowCount++;
-            });
+    private void CompareAndAddToDictResult(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB)
+    {
+        sourceList.ForEach(row =>
+        {
+            var dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                  && s.Mrecommend == row.Mrecommend
+                                                                  && s.Srecommend == row.Srecommend);
+            if (dataFromTargetDB != null) return;
+            dictResult.Add($"{RowCount}_{sourceDB}", row);
+            dictResult.Add($"{RowCount}_{targetDB}", null);
+            RowCount++;
+        });
+
+        sourceList.ForEach(row =>
+        {
+            var dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                  && s.Mrecommend == row.Mrecommend
+                                                                  && s.Srecommend == row.Srecommend
+                                                                  && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+            if (dataFromTargetDB == null) return;
+            dictResult.Add($"{RowCount}_{sourceDB}", row);
+            dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);
+            RowCount++;
         });
     }
 }
