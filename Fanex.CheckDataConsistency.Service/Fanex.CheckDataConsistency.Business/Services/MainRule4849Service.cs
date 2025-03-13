@@ -47,12 +47,14 @@ public class MainRule4849ServiceImp(
     private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
         log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] at {DateTime.Now}");
-        if (!AppConfigService.IsOnProcessingRule4849)
+        if (AppConfigService.IsOnProcessingRule4849)
         {
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] BEGIN at {DateTime.Now}");
-            QueryData();
-            log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] END at {DateTime.Now}");
+            return;
         }
+
+        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] BEGIN at {DateTime.Now}");
+        QueryData();
+        log.Log($"Retrying the Rule 48-49 call TimerElapsed, Retry [{AppConfigService.RetryCountRule4849}], IsOnProcessing [{AppConfigService.IsOnProcessingRule4849}] END at {DateTime.Now}");
     }
 
     private void QueryData()
@@ -170,7 +172,7 @@ public class MainRule4849ServiceImp(
         AppConfigService.RetryInfos = new Dictionary<string, List<RetryInfo>>
         {
             { Rule.Rule48, [new RetryInfo()] },
-            { Rule.Rule49, [new RetryInfo()] },
+            { Rule.Rule49, [new RetryInfo()] }
         };
     }
 

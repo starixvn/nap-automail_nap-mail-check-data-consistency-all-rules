@@ -12,23 +12,22 @@ public class DataConsistencyRule51ServiceImp(DataService dataService) : DataCons
 {
     public List<MessageRule51Model> QueryData()
     {
-        var result = new List<MessageRule51Model>();
         var resultOutput = new Result();
         var data = dataService.QueryRule51(resultOutput);
 
-        if (data.Count > 0 || resultOutput.ErrCode > 0)
+        if (data.Count <= 0 && resultOutput.ErrCode <= 0)
         {
-            var message = new MessageRule51Model
-            {
-                Rule = "#51",
-                Message = "Automate transfer from Super Balance to Licensee Code: Compare estimated number of transfer tickets (from Super to Licensee Code) equal to actual number of transfer tickets",
-                SPName = "DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect",
-                Data = data
-            };
-
-            result.Add(message);
+            return [];
         }
 
-        return result;
+        var message = new MessageRule51Model
+        {
+            Rule = "#51",
+            Message = "Automate transfer from Super Balance to Licensee Code: Compare estimated number of transfer tickets (from Super to Licensee Code) equal to actual number of transfer tickets",
+            SPName = "DBA_Consistency_AutoTransfer_Check_TotalTicketCorrect",
+            Data = data
+        };
+        
+        return [message];
     }
 }

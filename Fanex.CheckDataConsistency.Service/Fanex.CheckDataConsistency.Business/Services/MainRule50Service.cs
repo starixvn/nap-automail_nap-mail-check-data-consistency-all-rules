@@ -1,6 +1,5 @@
 ﻿using Fanex.CheckDataConsistency.Business.Model;
 using Fanex.MailDelivery.Core.Models;
-using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -12,14 +11,10 @@ public interface MainRule50Service
 
 public class MainRule50ServiceImp(
     Log log,
-    DataService dataService,
     RefineDataService refineDataService,
-    MailService mailService,
-    IConfiguration configuration)
+    MailService mailService)
     : MainRule50Service
 {
-    private readonly DataService dataService = dataService;
-    private readonly IConfiguration configuration = configuration;
     private bool isSendMail;
 
     public JobMessage Execute(string rule)

@@ -51,7 +51,7 @@ public class MailServiceImp : MailService
         {
             Title = "Data Consistency Checking service",
             Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-            Body = LoadBodyRule4849(messageModels, currentTime),
+            Body = LoadBodyRule4849(messageModels, currentTime)
         };
     }
 
@@ -79,7 +79,7 @@ public class MailServiceImp : MailService
         {
             Title = "Data Consistency Checking service",
             Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-            Body = LoadBodyRule50(messageModels),
+            Body = LoadBodyRule50(messageModels)
         };
     }
 
@@ -194,7 +194,7 @@ public class MailServiceImp : MailService
         {
             Title = "Data Consistency Checking service",
             Subject = $"Data Consistency Checking - {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-            Body = LoadBodyRule51(messageModels),
+            Body = LoadBodyRule51(messageModels)
         };
     }
 

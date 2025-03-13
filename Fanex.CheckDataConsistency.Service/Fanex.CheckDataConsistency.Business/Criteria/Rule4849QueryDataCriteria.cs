@@ -5,8 +5,6 @@ namespace Fanex.CheckDataConsistency.Business.Criteria;
 
 public class Rule4849QueryDataCriteria(string spName) : CriteriaBase
 {
-    private string spName { get; set; } = spName;
-
     public DateTime CurrentTime { get; set; }
 
     public string SMAListJson { get; set; }

@@ -55,11 +55,13 @@ public class DataConsistencyRule200201202203ServiceImp(DataServiceRule2002012022
                 }
                 else
                 {
-                    if (mainRow.RowCount != repRow.RowCount || mainRow.CHECKSUM_Value != repRow.CHECKSUM_Value)
+                    if (mainRow.RowCount == repRow.RowCount && mainRow.CHECKSUM_Value == repRow.CHECKSUM_Value)
                     {
-                        diffMainData.Add(mainRow);
-                        diffRepData.Add(repRow);
+                        return;
                     }
+
+                    diffMainData.Add(mainRow);
+                    diffRepData.Add(repRow);
                 }
             });
 

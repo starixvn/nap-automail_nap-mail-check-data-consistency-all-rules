@@ -13,11 +13,15 @@ public class ResultModel
 
     public byte[] CustListJson { get; set; }
 
+    public string CustList { get; set; }
+
     public int RetryCounter { get; set; }
 
-    public List<string> RulesList { get; set; } = [];
+    public int RetryCounterFromDBCUST { get; set; }
 
-    public List<string> CommandList { get; set; } = [];
+    public int RetryCounterFromDBCUST_DBPRO { get; set; }
+
+    public List<string> RulesList { get; set; } = [];
 
     public DateTime CurrentTime { get; set; }
 

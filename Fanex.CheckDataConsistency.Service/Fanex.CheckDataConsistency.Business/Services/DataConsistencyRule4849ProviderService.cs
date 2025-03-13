@@ -17,7 +17,7 @@ public class DataConsistencyRule4849ProviderServiceImp(
         var dict = new Dictionary<string, DataConsistencyRule4849Service>
         {
             { Rule.Rule48 , new  DataConsistencyServiceRule48Imp(dataService, log) },
-            { Rule.Rule49, new  DataConsistencyServiceRule49Imp(dataService, log) },
+            { Rule.Rule49, new  DataConsistencyServiceRule49Imp(dataService, log) }
         };
 
         return dict[rule];

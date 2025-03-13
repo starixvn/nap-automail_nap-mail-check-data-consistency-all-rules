@@ -15,7 +15,7 @@ public class DataConsistencyRule50ProviderServiceImp(DataService dataService) : 
         var dict = new Dictionary<string, DataConsistencyRule50Service>
         {
             { Rule.Rule50BalanceUp, new  DataConsistencyServiceRule50BUImp(dataService) },
-            { Rule.Rule50MoveBet, new  DataConsistencyServiceRule50MBImp(dataService) },
+            { Rule.Rule50MoveBet, new  DataConsistencyServiceRule50MBImp(dataService) }
         };
 
         return dict[rule];

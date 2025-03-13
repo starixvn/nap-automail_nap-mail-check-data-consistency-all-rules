@@ -13,8 +13,6 @@ public class SiteDBRule46Criteria(string siteDB) : CriteriaBase
 
     public DateTime CurrentTime { get; set; } = DateTime.Now;
 
-    private string siteDB { get; set; } = siteDB;
-
     public override string GetSettingKey() => $"{siteDB}_SiteDB_DBA_Consistency_CheckTicketCountAndChecksum_Transfer";
 
     public override bool IsValid() => true;

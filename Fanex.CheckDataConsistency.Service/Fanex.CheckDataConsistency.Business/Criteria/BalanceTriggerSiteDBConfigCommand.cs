@@ -8,7 +8,7 @@ public class BalanceTriggerSiteDBConfigCommand(string spName) : NonQueryCommand
 
     public bool IsTest { get; set; }
 
-    public int Mode { get; } = 1;
+    public int Mode => 1;
 
     public long LastRowInserted { get; set; }
 
