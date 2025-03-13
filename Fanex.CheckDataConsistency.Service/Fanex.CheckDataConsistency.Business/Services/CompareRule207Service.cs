@@ -33,8 +33,12 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         var dictResult = new Dictionary<string, CustInfoTable1Model>();
         var customerFromDBCUST = CustInfoFromDbcustAndDBTP(config, resultModel, dictResult);
 
-        //CustInfoFromDbcustAndDBPRO(config, resultModel, dictResult);
-        CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+        CustInfoFromDbcustAndDBPRO(config, resultModel, dictResult);
+
+        if (resultModel.RetryCounterFromDBCUST < 3)
+        {
+            CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+        }
 
         UpdateResultModel(resultModel, dictResult, customerFromDBCUST);
     }
@@ -107,6 +111,11 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         var customerFromDBCUST = CustInfoFromDbcust(config, resultModel);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
+        if (resultModel.RetryCounterFromDBCUST >= 3)
+        {
+            return customerFromDBCUST;
+        }
+
         var customerFromDBTP = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
         CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
 
@@ -156,17 +165,17 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private void CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
      IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var custInfoFromDBCUST = GetCustInfoFromDbcust(config, resultModel);
+        var custInfoFromDBCUST = GetCustInfoFromDbcustAndDBPRO(config, resultModel);
         resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
 
         var currentRowCount = RowCount;
         var custInfoFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
 
-        CompareAndAddToDictResult(custInfoFromDBCUST.Item1, custInfoFromDBPRO.Item1, dictResult, DB.DBCUST, DB.DBPRO);
+        CompareAndAddToDictResult_DBPRO(custInfoFromDBCUST.Item1, custInfoFromDBPRO.Item1, dictResult, DB.DBCUST, DB.DBPRO);
         UpdateCustListIfRowCountChanged(resultModel, custInfoFromDBCUST, currentRowCount);
     }
 
-    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel)
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
         var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
@@ -182,7 +191,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             return custInfoFromDBCUST;
         }
 
-        RetryCustInfoFromDbcustDBPRO(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
+        RetryCustInfoFromDbcustAndDBPRO(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
         return custInfoFromDBCUST;
     }
 
@@ -195,7 +204,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         }
     }
 
-    private void RetryCustInfoFromDbcustDBPRO(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
+    private void RetryCustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
     {
         while (resultModel.RetryCounterFromDBCUST_DBPRO < 3)
         {
@@ -263,6 +272,32 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
                                                                   && s.Mrecommend == row.Mrecommend
                                                                   && s.Srecommend == row.Srecommend
                                                                   && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+            if (dataFromTargetDB == null) return;
+            dictResult.Add($"{RowCount}_{sourceDB}", row);
+            dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);
+            RowCount++;
+        });
+    }
+
+    private void CompareAndAddToDictResult_DBPRO(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB)
+    {
+        sourceList.ForEach(row =>
+        {
+            var dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                  && s.Mrecommend == row.Mrecommend
+                                                                  && s.Srecommend == row.Srecommend);
+            if (dataFromTargetDB != null) return;
+            dictResult.Add($"{RowCount}_{sourceDB}", row);
+            dictResult.Add($"{RowCount}_{targetDB}", null);
+            RowCount++;
+        });
+
+        sourceList.ForEach(row =>
+        {
+            var dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                  && s.Mrecommend == row.Mrecommend
+                                                                  && s.Srecommend == row.Srecommend
+                                                                  && s.RowCount != row.RowCount);
             if (dataFromTargetDB == null) return;
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);

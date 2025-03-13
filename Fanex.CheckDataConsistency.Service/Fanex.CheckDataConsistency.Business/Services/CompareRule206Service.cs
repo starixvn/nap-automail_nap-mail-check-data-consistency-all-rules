@@ -31,7 +31,11 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         RowCount = 1;
         var dictResult = new Dictionary<string, CustInfoTable1Model>();
         var customerFromDBCUST = CustomerFromDbcustAndDBTP(config, resultModel, dictResult);
-        CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+
+        if (resultModel.RetryCounterFromDBCUST < 3)
+        {
+            CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+        }
 
         UpdateResultModel(resultModel, dictResult, customerFromDBCUST);
     }
@@ -96,6 +100,10 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
     {
         var customerFromDBCUST = CustomerFromDbcust(config, resultModel);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
+        if (resultModel.RetryCounterFromDBCUST >= 3)
+        {
+            return customerFromDBCUST;
+        }
 
         var customerFromDBTP = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
         CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
