@@ -27,7 +27,7 @@ public class CompareRule205ServiceImp(DataService dataService) : CompareRule205S
 
         resultModel.RulesList.Add("205.1 - Normal Account - Check exists Customer, not exist CustInfoMini");
         resultModel.RulesList.Add($"CustID From {config.VValue} To {resultModel.MaxCust_New}");
-        resultModel.RulesList.Add("DBTP.bodb02 - DBA_Consistency_Customer_Checking(table Customer)");
+        resultModel.RulesList.Add("DBTP.bodb02 - DBA_Consistency_Customer_Checking_DBTP(table Customer)");
         resultModel.RulesList.Add("DBGLOB.GlobCustDB - DBA_Consistency_Customer_Checking(table CustInfoMini)");
     }
 
@@ -35,7 +35,7 @@ public class CompareRule205ServiceImp(DataService dataService) : CompareRule205S
     {
         const int rowCount = 1;
         var dictResult = new Dictionary<string, CustomerModel>();
-        var customerFromDBTP = dataService.QueryCustomerFromDBTP(config.TableName, config.SpName, config.VValue);
+        var customerFromDBTP = dataService.QueryCustomerFromDBTP(config.TableName, config.SpName + "_DBTP", config.VValue);
         var customerFromDBGLOB = dataService.QueryCustomerFromDBGLOB(config.TableName, config.SpName, config.VValue, customerFromDBTP.MaxCust_New);
 
         if (customerFromDBTP.RowCount != customerFromDBGLOB.RowCount || customerFromDBTP.MaxCust_New != customerFromDBGLOB.MaxCust_New)
@@ -63,7 +63,7 @@ public class CompareRule205ServiceImp(DataService dataService) : CompareRule205S
 
         resultModel.RulesList.Add("205.2 - Sub Account - Check exists CustSub, not exist CustSubMini");
         resultModel.RulesList.Add($"SubaccID From {config.VValue} To {resultModel.MaxCust_New}");
-        resultModel.RulesList.Add("DBTP.bodb02 - DBA_Consistency_CustSub_Checking(table CustSub)");
+        resultModel.RulesList.Add("DBTP.bodb02 - DBA_Consistency_CustSub_Checking_DBTP(table CustSub)");
         resultModel.RulesList.Add("DBGLOB.GlobCustDB - DBA_Consistency_CustSub_Checking(table CustSubMini)");
     }
 
@@ -71,7 +71,7 @@ public class CompareRule205ServiceImp(DataService dataService) : CompareRule205S
     {
         const int rowCount = 1;
         var dictResult = new Dictionary<string, CustomerModel>();
-        var custSubFromDBTP = dataService.QueryCustomerFromDBTP(config.TableName, config.SpName, config.VValue);
+        var custSubFromDBTP = dataService.QueryCustomerFromDBTP(config.TableName, config.SpName + "_DBTP", config.VValue);
         var custSubFromDBGLOB = dataService.QueryCustomerFromDBGLOB(config.TableName, config.SpName, config.VValue, custSubFromDBTP.MaxCust_New);
 
         if (custSubFromDBTP.RowCount != custSubFromDBGLOB.RowCount || custSubFromDBTP.MaxCust_New != custSubFromDBGLOB.MaxCust_New)
