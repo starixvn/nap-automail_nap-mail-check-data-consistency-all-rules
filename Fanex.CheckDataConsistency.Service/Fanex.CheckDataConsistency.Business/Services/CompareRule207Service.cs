@@ -31,9 +31,9 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     {
         RowCount = 1;
         var dictResult = new Dictionary<string, CustInfoTable1Model>();
-        var customerFromDBCUST = CustInfoFromDbcustAndDBTP(config, resultModel, dictResult);
+        var customerFromDBCUST = CustInfoFromDbCustAndDBTP(config, resultModel, dictResult);
 
-        CustInfoFromDbcustAndDBPRO(config, resultModel, dictResult);
+        CustInfoFromDbCustAndDBPRO(config, resultModel, dictResult);
 
         if (resultModel.RetryCounterFromDBCUST < 3)
         {
@@ -105,10 +105,10 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         }
     }
 
-    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = CustInfoFromDbcust(config, resultModel);
+        var customerFromDBCUST = CustInfoFromDbCust(config, resultModel);
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
         if (resultModel.RetryCounterFromDBCUST >= 3)
@@ -122,7 +122,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         return customerFromDBCUST;
     }
 
-    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel)
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCust(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
         var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
@@ -138,12 +138,12 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             return custInfoFromDBCUST;
         }
 
-        RetryCustInfoFromDbcust(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
+        RetryCustInfoFromDbCust(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
 
         return custInfoFromDBCUST;
     }
 
-    private void RetryCustInfoFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
+    private void RetryCustInfoFromDbCust(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
     {
         while (resultModel.RetryCounterFromDBCUST < 3)
         {
@@ -162,20 +162,20 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         }
     }
 
-    private void CustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
+    private void CustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
      IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var custInfoFromDBCUST = GetCustInfoFromDbcustAndDBPRO(config, resultModel);
+        var custInfoFromDBCUST = GetCustInfoFromDbCustAndDBPRO(config, resultModel);
         resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
 
         var currentRowCount = RowCount;
         var custInfoFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
 
         CompareAndAddToDictResult_DBPRO(custInfoFromDBCUST.Item1, custInfoFromDBPRO.Item1, dictResult, DB.DBCUST, DB.DBPRO);
-        UpdateCustListIfRowCountChanged(resultModel, custInfoFromDBCUST, currentRowCount);
+        UpdateCustListIfRowCountChanged(resultModel, custInfoFromDBCUST.Item2, custInfoFromDBPRO.Item2, currentRowCount);
     }
 
-    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel)
+    private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
         var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
@@ -191,20 +191,24 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             return custInfoFromDBCUST;
         }
 
-        RetryCustInfoFromDbcustAndDBPRO(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
+        RetryCustInfoFromDbCustAndDBPRO(config, resultModel, ref custInfoFromDBCUST, ref jsonCustInfoFromDBCUST, ref hashCustInfoFromDBCUST);
         return custInfoFromDBCUST;
     }
 
-    private void UpdateCustListIfRowCountChanged(ResultModel resultModel, Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, int currentRowCount)
+    private void UpdateCustListIfRowCountChanged(ResultModel resultModel, CustInfoTable2Model custInfoFromDBCUST, CustInfoTable2Model custInfoFromDBPRO, int currentRowCount)
     {
         var newRowCount = RowCount;
         if (newRowCount != currentRowCount)
         {
-            resultModel.CustList = custInfoFromDBCUST.Item2.CustList;
+            var custIdFromCustDBList = custInfoFromDBCUST.CustList.Split(',');
+            var custIdFromDBPROList = custInfoFromDBPRO.CustList.Split(',');
+
+            var missingCustIds = custIdFromCustDBList.Except(custIdFromDBPROList).ToList();
+            resultModel.CustList = string.Join(",", missingCustIds);
         }
     }
 
-    private void RetryCustInfoFromDbcustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
+    private void RetryCustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel, ref Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> custInfoFromDBCUST, ref string jsonCustInfoFromDBCUST, ref string hashCustInfoFromDBCUST)
     {
         while (resultModel.RetryCounterFromDBCUST_DBPRO < 3)
         {
