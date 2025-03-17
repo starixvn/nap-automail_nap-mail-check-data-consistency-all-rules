@@ -100,18 +100,27 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                @foreach (var item2 in item.RepDiffData)
-                                                                {
-                                                                    <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
-                                                                        <td style="text-align:center;vertical-align:top">@item2.TableName</td>
-                                                                        <td style="text-align:center;vertical-align:top">@item2.Site</td>
-                                                                        <td style="text-align:center;vertical-align:top">
-                                                                            @{
-                                                                                value = config.Config.RuleNumber % 2 == 0 ? (long)item2.RowCount : (long)item2.CHECKSUM_Value;
-                                                                            }
-                                                                            <span>@value.ToString("N0")</span>
-                                                                        </td>
-                                                                    </tr>
+                                                                    @if(item.RepDiffData.Count == 0)
+                                                                    {
+                                                                        <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                                            <td colspan="3" style="text-align:center;vertical-align:top">There is no data.</td>                                                                   
+                                                                        </tr>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @foreach (var item2 in item.RepDiffData)
+                                                                        {
+                                                                            <tr style="height: 25px; font-size:9pt; font-family:Tahoma, Arial, Verdana, Sans-Serif">
+                                                                                <td style="text-align:center;vertical-align:top">@item2.TableName</td>
+                                                                                <td style="text-align:center;vertical-align:top">@item2.Site</td>
+                                                                                <td style="text-align:center;vertical-align:top">
+                                                                                    @{
+                                                                                        value = config.Config.RuleNumber % 2 == 0 ? (long)item2.RowCount : (long)item2.CHECKSUM_Value;
+                                                                                    }
+                                                                                    <span>@value.ToString("N0")</span>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
                                                                 }
                                                                 </tbody>
                                                             </table>
