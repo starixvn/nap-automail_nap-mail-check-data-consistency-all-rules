@@ -42,7 +42,8 @@ public class DataConsistencyRule200201202203ServiceImp(DataServiceRule2002012022
 
         DB.RepDB.ForEach(repDb =>
         {
-            spName = $"{repDb}_{config.SpName}";
+            spName = repDb.Equals("DBTP") ? $"{repDb}_{config.SpName}_DBTP" : $"{repDb}_{config.SpName}";
+
             var repData = dataService.CheckingCount(spName, config.TableName, true);
             var diffMainData = new List<SettingCountModel>();
             var diffRepData = new List<SettingCountModel>();
