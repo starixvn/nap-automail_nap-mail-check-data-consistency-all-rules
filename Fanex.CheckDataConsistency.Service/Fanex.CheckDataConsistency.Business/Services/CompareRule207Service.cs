@@ -50,8 +50,6 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             resultModel.RetryCounter++;
             resultModel.RetryCounterFromDBCUST = 0;
             resultModel.RetryCounterFromDBCUST_DBPRO = 0;
-            PreviousHashCustInfoFromDBCUST = string.Empty;
-            PreviousHashCustInfoFromDBCUST_DBPRO = string.Empty;
             QueryRule207CusInfoInHouse(config, resultModel);
             System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
         }
@@ -125,7 +123,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCust(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+        var custInfoFromDBCUST_RowCount = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_RowCount, Formatting.Indented);
         var hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
         if (string.IsNullOrEmpty(PreviousHashCustInfoFromDBCUST))
@@ -148,7 +147,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         while (resultModel.RetryCounterFromDBCUST < 3)
         {
             custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+            var custInfoFromDBCUST_RowCount = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_RowCount, Formatting.Indented);
             hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
             if (PreviousHashCustInfoFromDBCUST == hashCustInfoFromDBCUST)
@@ -178,7 +178,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
-        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+        var custInfoFromDBCUST_RowCount = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_RowCount, Formatting.Indented);
         var hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
         if (string.IsNullOrEmpty(PreviousHashCustInfoFromDBCUST_DBPRO))
@@ -213,7 +214,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         while (resultModel.RetryCounterFromDBCUST_DBPRO < 3)
         {
             custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
-            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST.Item1, Formatting.Indented);
+            var custInfoFromDBCUST_RowCount = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST, Formatting.Indented);
             hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
             if (PreviousHashCustInfoFromDBCUST_DBPRO == hashCustInfoFromDBCUST)
