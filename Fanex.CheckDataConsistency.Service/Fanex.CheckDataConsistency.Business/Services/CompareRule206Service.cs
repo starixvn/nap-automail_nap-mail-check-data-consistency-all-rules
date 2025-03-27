@@ -46,7 +46,6 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         {
             resultModel.RetryCounter++;
             resultModel.RetryCounterFromDBCUST = 0;
-            PreviousHashCustomerFromDBCUST = string.Empty;
             QueryRule206CustomerInHouse(config, resultModel);
             System.Threading.Thread.Sleep(AppConfigService.Config.SleepIntervalInSecond * 1000);
         }
@@ -114,7 +113,8 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustomerFromDbcust(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        var jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
+        var customerFromDBCUST_CHECKSUM = customerFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.CHECKSUM_Value });
+        var jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST_CHECKSUM, Formatting.Indented);
         var hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
 
         if (string.IsNullOrEmpty(PreviousHashCustomerFromDBCUST))
@@ -137,7 +137,8 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         while (resultModel.RetryCounterFromDBCUST < 3)
         {
             customerFromDBCUST = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST.Item1, Formatting.Indented);
+            var customerFromDBCUST_CHECKSUM = customerFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.CHECKSUM_Value });
+            jsonCustomerFromDBCUST = JsonConvert.SerializeObject(customerFromDBCUST_CHECKSUM, Formatting.Indented);
             hashCustomerFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustomerFromDBCUST);
 
             if (PreviousHashCustomerFromDBCUST == hashCustomerFromDBCUST)
