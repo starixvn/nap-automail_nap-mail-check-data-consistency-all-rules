@@ -3,6 +3,7 @@ using Fanex.CheckDataConsistency.Business.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -101,6 +102,11 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
         if (resultModel.RetryCounterFromDBCUST >= 3)
         {
+            var json = JsonConvert.SerializeObject(customerFromDBCUST, Formatting.Indented);
+            var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";
+            var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+            Directory.CreateDirectory(path);
+            File.WriteAllText($"{path}/Rule206-{date}-CustomerFromDbcust.json", json);
             return customerFromDBCUST;
         }
 

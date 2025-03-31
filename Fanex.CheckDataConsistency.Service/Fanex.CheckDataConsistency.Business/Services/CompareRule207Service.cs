@@ -3,6 +3,7 @@ using Fanex.CheckDataConsistency.Business.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -106,18 +107,23 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
         IDictionary<string, CustInfoTable1Model> dictResult)
     {
-        var customerFromDBCUST = CustInfoFromDbCust(config, resultModel);
-        resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
+        var custInfoFromDBCUST = CustInfoFromDbCust(config, resultModel);
+        resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
 
         if (resultModel.RetryCounterFromDBCUST >= 3)
         {
-            return customerFromDBCUST;
+            var json = JsonConvert.SerializeObject(custInfoFromDBCUST, Formatting.Indented);
+            var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";
+            var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+            Directory.CreateDirectory(path);
+            File.WriteAllText($"{path}/Rule207-{date}-CustInfoFromDbCust.json", json);
+            return custInfoFromDBCUST;
         }
 
         var customerFromDBTP = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
+        CompareAndAddToDictResult(custInfoFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
 
-        return customerFromDBCUST;
+        return custInfoFromDBCUST;
     }
 
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCust(DataConsistencyConfigModel config, ResultModel resultModel)
