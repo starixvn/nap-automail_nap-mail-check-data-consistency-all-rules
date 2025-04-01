@@ -3,6 +3,7 @@ using Fanex.CheckDataConsistency.Business.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -35,6 +36,12 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult, counterModel);
         if (counterModel.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3)
         {
+            var json = JsonConvert.SerializeObject(dictResult, Formatting.Indented);
+            var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";
+            var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+            Directory.CreateDirectory(path);
+            File.WriteAllText($"{path}/Rule206-{date}-CustomerFromDbcust.json", json);
+
             dictResult.Clear();
         }
 
@@ -104,7 +111,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
 
         var customerFromDBTP = dataServiceRule206.QueryCustomerInHouseCheckingRule206(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP, counterModel);
+        CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP, counterModel, resultModel);
 
         return customerFromDBCUST;
     }
@@ -177,11 +184,11 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         dbReplList.ForEach(dbRepl =>
         {
             var customerFromReplDB = dataServiceRule206.QueryCustomerInHouseCheckingRule206(dbRepl, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            CompareAndAddToDictResult(dbCust, customerFromReplDB.Item1, dictResult, DB.DBCUST, dbRepl, counterModel);
+            CompareAndAddToDictResult(dbCust, customerFromReplDB.Item1, dictResult, DB.DBCUST, dbRepl, counterModel, resultModel);
         });
     }
 
-    private void CompareAndAddToDictResult(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB, CounterModel counterModel)
+    private void CompareAndAddToDictResult(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB, CounterModel counterModel, ResultModel resultModel)
     {
         sourceList.ForEach(row =>
         {
@@ -201,6 +208,14 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
                                                                   && s.Mrecommend == row.Mrecommend
                                                                   && s.Srecommend == row.Srecommend
                                                                   && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+            if (resultModel.RetryCounterFromDBCUST == 3)
+            {
+                dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                 && s.Mrecommend == row.Mrecommend
+                                                                 && s.Srecommend == row.Srecommend
+                                                                 && s.RowCount != row.RowCount);
+            }
+
             if (dataFromTargetDB == null) return;
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);
