@@ -1,7 +1,9 @@
 ﻿using Fanex.CheckDataConsistency.Business.Model;
 using Fanex.MailDelivery.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -52,6 +54,12 @@ public class MainRule207ServiceImp(
         {
             return;
         }
+
+        var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+        var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}";
+        var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+        Directory.CreateDirectory(path);
+        File.WriteAllText($"{path}/Rule207-{date}-CreateMailRule207.json", json);
 
         var mail = mailService.CreateMailRule207(data);
         mail.MailingListId = AppConfigService.Config.MailIDRule207;

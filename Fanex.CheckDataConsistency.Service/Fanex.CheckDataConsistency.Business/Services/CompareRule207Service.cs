@@ -38,7 +38,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         var counterModelDBReps = new CounterModel();
         var customerFromDBCUST = CustInfoFromDbCustAndDBTP(config, resultModel, dictResultDBCUST_DBPRO, counterModelDBCUST_DBPRO);
         CustInfoFromDbCustAndDBPRO(config, resultModel, dictResultDBCUST_DBPRO, counterModelDBCUST_DBPRO);
-        if (counterModelDBCUST_DBPRO.Counter == 0 && resultModel.RetryCounterFromDBCUST_DBPRO == 3)
+        if (counterModelDBCUST_DBPRO.Counter == 0 && resultModel.RetryCounterFromDBCUST_DBPRO == 3 && dictResultDBCUST_DBPRO.Count > 0)
         {
             var json = JsonConvert.SerializeObject(dictResultDBCUST_DBPRO, Formatting.Indented);
             var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST_DBPRO}";
@@ -49,7 +49,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         }
 
         CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResultDBCUST_DBReps, counterModelDBReps);
-        if (counterModelDBReps.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3)
+        if (counterModelDBReps.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3 && dictResultDBCUST_DBReps.Count > 0)
         {
             var json = JsonConvert.SerializeObject(dictResultDBCUST_DBReps, Formatting.Indented);
             var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";

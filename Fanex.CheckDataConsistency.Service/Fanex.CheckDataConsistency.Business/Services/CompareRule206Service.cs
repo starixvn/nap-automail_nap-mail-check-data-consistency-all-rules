@@ -34,7 +34,7 @@ public class CompareRule206ServiceImp(DataServiceRule206 dataServiceRule206, Dat
         var counterModel = new CounterModel();
         var customerFromDBCUST = CustomerFromDbcustAndDBTP(config, resultModel, dictResult, counterModel);
         CustomerFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult, counterModel);
-        if (counterModel.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3)
+        if (counterModel.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3 && dictResult.Count > 0)
         {
             var json = JsonConvert.SerializeObject(dictResult, Formatting.Indented);
             var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";
