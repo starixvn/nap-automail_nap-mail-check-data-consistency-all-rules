@@ -3,6 +3,7 @@ using Fanex.CheckDataConsistency.Business.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Fanex.CheckDataConsistency.Business.Services;
@@ -30,16 +31,35 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     private void QueryRule207CusInfoInHouse(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         RowCount = 1;
+        var dictResultDBCUST_DBPRO = new Dictionary<string, CustInfoTable1Model>();
+        var dictResultDBCUST_DBReps = new Dictionary<string, CustInfoTable1Model>();
         var dictResult = new Dictionary<string, CustInfoTable1Model>();
-        var customerFromDBCUST = CustInfoFromDbCustAndDBTP(config, resultModel, dictResult);
-
-        CustInfoFromDbCustAndDBPRO(config, resultModel, dictResult);
-
-        if (resultModel.RetryCounterFromDBCUST < 3)
+        var counterModelDBCUST_DBPRO = new CounterModel();
+        var counterModelDBReps = new CounterModel();
+        var customerFromDBCUST = CustInfoFromDbCustAndDBTP(config, resultModel, dictResultDBCUST_DBPRO, counterModelDBCUST_DBPRO);
+        CustInfoFromDbCustAndDBPRO(config, resultModel, dictResultDBCUST_DBPRO, counterModelDBCUST_DBPRO);
+        if (counterModelDBCUST_DBPRO.Counter == 0 && resultModel.RetryCounterFromDBCUST_DBPRO == 3)
         {
-            CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResult);
+            var json = JsonConvert.SerializeObject(dictResultDBCUST_DBPRO, Formatting.Indented);
+            var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST_DBPRO}";
+            var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+            Directory.CreateDirectory(path);
+            File.WriteAllText($"{path}/Rule207-{date}-dictResultDBCUST_DBPRO.json", json);
+            dictResultDBCUST_DBPRO.Clear();
         }
 
+        CustInfoFromDbcustAndReplicationDB(customerFromDBCUST.Item1, config, resultModel, dictResultDBCUST_DBReps, counterModelDBReps);
+        if (counterModelDBReps.Counter == 0 && resultModel.RetryCounterFromDBCUST == 3)
+        {
+            var json = JsonConvert.SerializeObject(dictResultDBCUST_DBReps, Formatting.Indented);
+            var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}-Retry-{resultModel.RetryCounterFromDBCUST}";
+            var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
+            Directory.CreateDirectory(path);
+            File.WriteAllText($"{path}/Rule207-{date}-dictResultDBCUST_DBReps.json", json);
+            dictResultDBCUST_DBReps.Clear();
+        }
+
+        dictResult = dictResult.Concat(dictResultDBCUST_DBPRO).Concat(dictResultDBCUST_DBReps).ToDictionary(x => x.Key, x => x.Value);
         UpdateResultModel(resultModel, dictResult, customerFromDBCUST);
     }
 
@@ -104,20 +124,14 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     }
 
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCustAndDBTP(DataConsistencyConfigModel config, ResultModel resultModel,
-        IDictionary<string, CustInfoTable1Model> dictResult)
+        IDictionary<string, CustInfoTable1Model> dictResult, CounterModel counterModel)
     {
-        var customerFromDBCUST = CustInfoFromDbCust(config, resultModel);
-        resultModel.CustListJson ??= customerFromDBCUST.Item2.CustListJson;
-
-        if (resultModel.RetryCounterFromDBCUST >= 3)
-        {
-            return customerFromDBCUST;
-        }
-
+        var custInfoFromDBCUST = CustInfoFromDbCust(config, resultModel);
+        resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
         var customerFromDBTP = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBTP, config.TableName, config.SpName + "_DBTP", config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-        CompareAndAddToDictResult(customerFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP);
+        CompareAndAddToDictResult(custInfoFromDBCUST.Item1, customerFromDBTP.Item1, dictResult, DB.DBCUST, DB.DBTP, resultModel.RetryCounterFromDBCUST, counterModel);
 
-        return customerFromDBCUST;
+        return custInfoFromDBCUST;
     }
 
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> CustInfoFromDbCust(DataConsistencyConfigModel config, ResultModel resultModel)
@@ -147,7 +161,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         while (resultModel.RetryCounterFromDBCUST < 3)
         {
             custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(DB.DBCUST, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            var custInfoFromDBCUST_CHECKSUM = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.RowCount });
+            var custInfoFromDBCUST_CHECKSUM = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.CHECKSUM_Value });
             jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_CHECKSUM, Formatting.Indented);
             hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
@@ -163,26 +177,22 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     }
 
     private void CustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel,
-     IDictionary<string, CustInfoTable1Model> dictResult)
+     IDictionary<string, CustInfoTable1Model> dictResult, CounterModel counterModel)
     {
         var custInfoFromDBCUST = GetCustInfoFromDbCustAndDBPRO(config, resultModel);
         resultModel.CustListJson ??= custInfoFromDBCUST.Item2.CustListJson;
-        if (resultModel.RetryCounterFromDBCUST_DBPRO >= 3)
-        {
-            return;
-        }
 
         var currentRowCount = RowCount;
         var custInfoFromDBPRO = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBPRO, config.SpName + "_DBPRO", resultModel.CustListJson);
-        CompareAndAddToDictResult_DBPRO(custInfoFromDBCUST.Item1, custInfoFromDBPRO.Item1, dictResult, DB.DBCUST, DB.DBPRO);
+        CompareAndAddToDictResult_DBPRO(custInfoFromDBCUST.Item1, custInfoFromDBPRO.Item1, dictResult, DB.DBCUST, DB.DBPRO, counterModel);
         UpdateCustListIfRowCountChanged(resultModel, custInfoFromDBCUST.Item2, custInfoFromDBPRO.Item2, currentRowCount);
     }
 
     private Tuple<List<CustInfoTable1Model>, CustInfoTable2Model> GetCustInfoFromDbCustAndDBPRO(DataConsistencyConfigModel config, ResultModel resultModel)
     {
         var custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
-        var custInfoFromDBCUST_CHECKSUM = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.CHECKSUM_Value });
-        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_CHECKSUM, Formatting.Indented);
+        var custInfoFromDBCUST_COUNT = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+        var jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_COUNT, Formatting.Indented);
         var hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
         if (string.IsNullOrEmpty(PreviousHashCustInfoFromDBCUST_DBPRO))
@@ -217,8 +227,8 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         while (resultModel.RetryCounterFromDBCUST_DBPRO < 3)
         {
             custInfoFromDBCUST = dataServiceRule207.QueryCustInfoInHouseCheckingDBPRORule207(DB.DBCUST, config.SpName + "_DBPRO", resultModel.CustListJson);
-            var custInfoFromDBCUST_CHECKSUM = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, CHECKSUM_Value = s.CHECKSUM_Value });
-            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST, Formatting.Indented);
+            var custInfoFromDBCUST_COUNT = custInfoFromDBCUST.Item1.Select(s => new CustInfoTable1Model { TableName = s.TableName, Recommend = s.Recommend, Mrecommend = s.Mrecommend, Srecommend = s.Srecommend, CustId = s.CustId, RowCount = s.RowCount });
+            jsonCustInfoFromDBCUST = JsonConvert.SerializeObject(custInfoFromDBCUST_COUNT, Formatting.Indented);
             hashCustInfoFromDBCUST = StringHasher.HashLongStringToSmallString(jsonCustInfoFromDBCUST);
 
             if (PreviousHashCustInfoFromDBCUST_DBPRO == hashCustInfoFromDBCUST)
@@ -233,7 +243,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
     }
 
     private void CustInfoFromDbcustAndReplicationDB(List<CustInfoTable1Model> dbCust, DataConsistencyConfigModel config, ResultModel resultModel,
-        IDictionary<string, CustInfoTable1Model> dictResult)
+        IDictionary<string, CustInfoTable1Model> dictResult, CounterModel counterModel)
     {
         var dbReplList = new List<string>
         {
@@ -258,11 +268,11 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
         dbReplList.ForEach(dbRepl =>
         {
             var custInfoFromReplDB = dataServiceRule207.QueryCustInfoInHouseCheckingRule207(dbRepl, config.TableName, config.SpName, config.VValue, resultModel.SMAListJson, resultModel.CustListJson);
-            CompareAndAddToDictResult(dbCust, custInfoFromReplDB.Item1, dictResult, DB.DBCUST, dbRepl);
+            CompareAndAddToDictResult(dbCust, custInfoFromReplDB.Item1, dictResult, DB.DBCUST, dbRepl, resultModel.RetryCounterFromDBCUST, counterModel);
         });
     }
 
-    private void CompareAndAddToDictResult(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB)
+    private void CompareAndAddToDictResult(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB, int retryCounterFromDBCUST, CounterModel counterModel)
     {
         sourceList.ForEach(row =>
         {
@@ -273,6 +283,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", null);
             RowCount++;
+            counterModel.CounterNotExists++;
         });
 
         sourceList.ForEach(row =>
@@ -281,14 +292,28 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
                                                                   && s.Mrecommend == row.Mrecommend
                                                                   && s.Srecommend == row.Srecommend
                                                                   && (s.RowCount != row.RowCount || s.CHECKSUM_Value != row.CHECKSUM_Value));
+
+            if (retryCounterFromDBCUST == 3)
+            {
+                dataFromTargetDB = targetList.FirstOrDefault(s => s.Recommend == row.Recommend
+                                                                 && s.Mrecommend == row.Mrecommend
+                                                                 && s.Srecommend == row.Srecommend
+                                                                 && s.RowCount != row.RowCount);
+            }
+
             if (dataFromTargetDB == null) return;
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);
             RowCount++;
+
+            if (row.RowCount != dataFromTargetDB.RowCount)
+            {
+                counterModel.CounterNotMatchRowCount++;
+            }
         });
     }
 
-    private void CompareAndAddToDictResult_DBPRO(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB)
+    private void CompareAndAddToDictResult_DBPRO(List<CustInfoTable1Model> sourceList, List<CustInfoTable1Model> targetList, IDictionary<string, CustInfoTable1Model> dictResult, string sourceDB, string targetDB, CounterModel counterModel)
     {
         sourceList.ForEach(row =>
         {
@@ -299,6 +324,7 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", null);
             RowCount++;
+            counterModel.CounterNotExists++;
         });
 
         sourceList.ForEach(row =>
@@ -307,10 +333,16 @@ public class CompareRule207ServiceImp(DataServiceRule207 dataServiceRule207, Dat
                                                                   && s.Mrecommend == row.Mrecommend
                                                                   && s.Srecommend == row.Srecommend
                                                                   && s.RowCount != row.RowCount);
+
             if (dataFromTargetDB == null) return;
             dictResult.Add($"{RowCount}_{sourceDB}", row);
             dictResult.Add($"{RowCount}_{targetDB}", dataFromTargetDB);
             RowCount++;
+
+            if (row.RowCount != dataFromTargetDB.RowCount)
+            {
+                counterModel.CounterNotMatchRowCount++;
+            }
         });
     }
 }
