@@ -56,7 +56,7 @@ public class MainRule207ServiceImp(
         }
 
         var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-        var date = $"{DateTime.Today:yyyyMMdd}-{DateTime.Now.Ticks}";
+        var date = $"{DateTime.Now:yyyyMMdd-hh-mm-ss tt}";
         var path = $"{Directory.CreateDirectory(AppConfigService.Config.Path)}/{DateTime.Now:yyyyMMdd}";
         Directory.CreateDirectory(path);
         File.WriteAllText($"{path}/Rule207-{date}-CreateMailRule207.json", json);
