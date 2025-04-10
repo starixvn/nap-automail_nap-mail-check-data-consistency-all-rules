@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DataServiceRule59, DataServiceRule59Imp>();
         services.AddSingleton<DataServiceRule61, DataServiceRule61Imp>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
+        services.AddSingleton<DeleteFilesService, DeleteFilesServiceImp>();
 
         services.AddSingleton<MailService, MailServiceImp>();
         services.AddSingleton<RefineDataService, RefineDataServiceImp>();
@@ -79,6 +80,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainBackgroundRule205Service>();
         services.AddSingleton<MainBackgroundRule206Service>();
         services.AddSingleton<MainBackgroundRule207Service>();
+        services.AddSingleton<MainBackgroundDelFileService>();
 
         Services = services;
         MailClientHandler.Start();

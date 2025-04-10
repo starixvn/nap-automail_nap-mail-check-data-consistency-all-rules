@@ -19,7 +19,8 @@ public class MainRule4849ServiceImp(
     Log log,
     RefineDataService refineDataService,
     MailService mailService,
-    DataServiceMailStation dataServiceMailStation)
+    DataServiceMailStation dataServiceMailStation
+    )
     : MainRule4849Service, IDisposable
 {
     private bool isHasData;

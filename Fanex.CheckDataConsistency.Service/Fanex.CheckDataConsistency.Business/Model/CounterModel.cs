@@ -1,11 +1,10 @@
-﻿namespace Fanex.CheckDataConsistency.Business.Model
+﻿namespace Fanex.CheckDataConsistency.Business.Model;
+
+public class CounterModel
 {
-    public class CounterModel
-    {
-        public int CounterNotExists { get; set; }
+    public int CounterNotExists { get; set; }
 
-        public int CounterNotMatchRowCount { get; set; }
+    public int CounterNotMatchRowCount { get; set; }
 
-        public int Counter => CounterNotExists + CounterNotMatchRowCount;
-    }
+    public int Counter => CounterNotExists + CounterNotMatchRowCount;
 }
