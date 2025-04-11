@@ -33,6 +33,7 @@ services.AddHostedService<MainBackgroundRule204Service>();
 services.AddHostedService<MainBackgroundRule205Service>();
 services.AddHostedService<MainBackgroundRule206Service>();
 services.AddHostedService<MainBackgroundRule207Service>();
+services.AddHostedService<MainBackgroundDelFileService>();
 
 var app = builder.Build();
 app.UseSwagger();
