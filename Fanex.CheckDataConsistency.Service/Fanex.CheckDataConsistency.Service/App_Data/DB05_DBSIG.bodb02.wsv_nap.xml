@@ -1,6 +1,6 @@
 ﻿<Functions>
 	<Function Name="Scale Out DB">
-		<Setting Key="DB05_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DB05_DBSIG.bodb02.wsv_nap" Timeout="0" />
-		<Setting Key="DB05_BalanceTriggerSiteDBConfig_Select" SpName="BalanceTriggerSiteDBConfig_Select" DbName="DB05_DBSIG.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB05_DBA_Consistency_BalanceTrigger_Checking" SpName="DBA_Consistency_BalanceTrigger_Checking" DbName="DBBAH.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB05_BalanceTriggerSiteDBConfig_Select" SpName="BalanceTriggerSiteDBConfig_Select" DbName="DBBAH.bodb02.wsv_nap" Timeout="0" />
 	</Function>
 </Functions>

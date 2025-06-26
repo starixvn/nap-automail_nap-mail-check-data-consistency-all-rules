@@ -1,6 +1,6 @@
 ﻿<Functions>
 	<Function Name="Scale Out DB">
-		<Setting Key="DB04ADMIN2_DBA_Consistency_Customer_InhouseRepl_Checking" SpName="DBA_Consistency_Customer_InhouseRepl_Checking" DbName="DB04ADMIN2_DB04ADMIN1.bodb02.wsv_nap" Timeout="0" />
-		<Setting Key="DB04ADMIN2_DBA_Consistency_CustInfo_InhouseRepl_Checking" SpName="DBA_Consistency_CustInfo_InhouseRepl_Checking" DbName="DB04ADMIN2_DB04ADMIN1.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB04ADMIN2_DBA_Consistency_Customer_InhouseRepl_Checking" SpName="DBA_Consistency_Customer_InhouseRepl_Checking" DbName="DB04ADMIN2.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DB04ADMIN2_DBA_Consistency_CustInfo_InhouseRepl_Checking" SpName="DBA_Consistency_CustInfo_InhouseRepl_Checking" DbName="DB04ADMIN2.bodb02.wsv_nap" Timeout="0" />
 	</Function>
 </Functions>
