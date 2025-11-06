@@ -26,9 +26,13 @@ public static class DB
     public const string DB04ADMIN2 = "DB04ADMIN2";
     public const string DBPRO = "DBPRO";
 
-    public static List<string> DB05X06X = ["DB052", "DB053", "DB061", "DB062"];
+    public static List<string> DB05X06X { get; } = ["DB052", "DB053", "DB061", "DB062"];
+
+    public static List<string> DB_05X_06X_CTG { get; } = ["DB052", "DB053", "DB061", "DB062", "DBCTG"];
+
     public static List<string> MainDB { get; } = ["DBCUST"];
+
     public static List<string> RepDB { get; } = ["DBTP", "DB061", "DB062"];
 
-    public static List<string> DB05X = ["DB05", "DB05BK1"];
+    public static List<string> DB05X { get; } = ["DB05", "DB05BK1"];
 }

@@ -115,8 +115,8 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var notExistsModel = new MessageRule4849Model
             {
                 Rule = "#49",
-                Message = "Tickets are mismatching between SiteDB and DBTP, between SiteDB and DB052, DB053, DB061, DB062",
-                SPName = "DBA_Consistency_CheckSumTicket, SiteDB_DBA_Consistency_CheckSumTicket",
+                Message = "Tickets are mismatching between SiteDB and DBTP, between SiteDB and DB052, DB053, DB061, DB062, DBTrans",
+                SPName = "DBA_Consistency_CheckSumTicket, SiteDB_DBA_Consistency_CheckSumTicket, DBA_Consistency_CheckSumTicket_DBTrans",
                 Data = notExistsRows.Skip(0).Take(Rule.TOP100).ToDictionary(d => d.Key, d => d.Value),
                 FromToDates = dataConsistency.Item2.Skip(0).Take(Rule.TOP1).ToList(),
                 IsSelectTop = notExistsRows.Count > Rule.TOP100
@@ -125,8 +125,8 @@ namespace Fanex.CheckDataConsistency.Business.Services
             var diffModel = new MessageRule4849Model
             {
                 Rule = "#49",
-                Message = "Tickets are different TotalCheckSumAgg between SiteDB and DBTP, between SiteDB and DB052, DB053, DB061, DB062",
-                SPName = "DBA_Consistency_CheckSumTicket, SiteDB_DBA_Consistency_CheckSumTicket",
+                Message = "Tickets are different TotalCheckSumAgg between SiteDB and DBTP, between SiteDB and DB052, DB053, DB061, DB062, DBTrans",
+                SPName = "DBA_Consistency_CheckSumTicket, SiteDB_DBA_Consistency_CheckSumTicket, DBA_Consistency_CheckSumTicket_DBTrans",
                 Data = diffRows.Skip(0).Take(Rule.TOP100).ToDictionary(d => d.Key, d => d.Value),
                 FromToDates = dataConsistency.Item2.Skip(0).Take(Rule.TOP1).ToList(),
                 IsSelectTop = diffRows.Count > Rule.TOP100
