@@ -1,0 +1,6 @@
+﻿<Functions>
+	<Function Name="Scale Out DB">
+		<Setting Key="DBCTG_DBA_Consistency_CheckTicketCount_DBTrans" SpName="DBA_Consistency_CheckTicketCount_DBTrans" DbName="DBCTG.bodb02.wsv_nap" Timeout="0" />
+		<Setting Key="DBCTG_DBA_Consistency_CheckSumTicket_DBTrans" SpName="DBA_Consistency_CheckSumTicket_DBTrans" DbName="DBCTG.bodb02.wsv_nap" Timeout="0" />
+	</Function>
+</Functions>
